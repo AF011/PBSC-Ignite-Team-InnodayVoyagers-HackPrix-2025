@@ -1,6 +1,6 @@
 # PBSC-Ignite 🚀
 
-An AI-Powered Learning Platform for Personalized Career Development
+*An AI-Powered Learning Platform for Personalized Career Development*
 
 PBSC-Ignite is a comprehensive learning management system that creates personalized learning roadmaps, provides AI-powered tutoring, and includes integrated assessments to help users achieve their career goals.
 
@@ -13,11 +13,11 @@ PBSC-Ignite is a comprehensive learning management system that creates personali
 - Real-time progress tracking and analytics
 
 ### 🤖 AI-Powered Components
-- *Leo AI Mentor*: Personalized tutoring and guidance powered by Claude Sonnet 4
-- *Career Coach*: Professional development advice with advanced reasoning
-- *Integrated Assessments*: Theory and coding evaluations
-- *Smart Content Generation*: Using AWS Bedrock, Groq, Llama, and Perplexity APIs
-- *Intelligent Progress Posts*: AI-generated LinkedIn content for achievement sharing
+- **Leo AI Mentor**: Personalized tutoring and guidance powered by Claude Sonnet 4
+- **Career Coach**: Professional development advice with advanced reasoning
+- **Integrated Assessments**: Theory and coding evaluations
+- **Smart Content Generation**: Using AWS Bedrock, Groq, Llama, and Perplexity APIs
+- **Intelligent Progress Posts**: AI-generated LinkedIn content for achievement sharing
 
 ### 📊 Assessment System
 - Automated coding project evaluations
@@ -27,9 +27,9 @@ PBSC-Ignite is a comprehensive learning management system that creates personali
 - Real-time feedback and scoring
 
 ### 🔗 Enhanced LinkedIn Integration
-- *Unipile Integration*: Seamless LinkedIn account connection
+- **Unipile Integration**: Seamless LinkedIn account connection
 - Profile data fetching and analysis
-- *One-Click Progress Sharing*: AI-generated posts for learning milestones
+- **One-Click Progress Sharing**: AI-generated posts for learning milestones
 - Professional networking insights
 - Automated achievement publishing
 - Custom post generation based on user progress and achievements
@@ -44,21 +44,21 @@ PBSC-Ignite is a comprehensive learning management system that creates personali
 ## 🏗 Architecture
 
 ### Tech Stack
-- *Backend*: Flask (Python)
-- *Database*: MongoDB
-- *Caching*: Redis
-- *Frontend*: HTML, CSS, JavaScript
-- *AI APIs*: 
-  - *AWS Bedrock*: Claude Sonnet 4 for advanced reasoning and tutoring
-  - *Groq*: Fast inference for real-time responses
-  - *Perplexity*: Real-time information and research
-  - *Llama*: Structured content generation
-- *Social Integration*: Unipile API for LinkedIn connectivity
-- *Authentication*: Session-based auth with bcrypt
+- **Backend**: Flask (Python)
+- **Database**: MongoDB
+- **Caching**: Redis
+- **Frontend**: HTML, CSS, JavaScript
+- **AI APIs**: 
+  - **AWS Bedrock**: Claude Sonnet 4 for advanced reasoning and tutoring
+  - **Groq**: Fast inference for real-time responses
+  - **Perplexity**: Real-time information and research
+  - **Llama**: Structured content generation
+- **Social Integration**: Unipile API for LinkedIn connectivity
+- **Authentication**: Session-based auth with bcrypt
 
 ### Project Structure
 
-
+```
 PBSC-Ignite/
 ├── app/
 │   ├── __init__.py                 # Flask app factory
@@ -94,7 +94,7 @@ PBSC-Ignite/
 │       └── assets/                 # Images and other assets
 ├── run.py                          # Application entry point
 └── README.md                       # This file
-
+```
 
 ## 🚀 Getting Started
 
@@ -111,21 +111,21 @@ PBSC-Ignite/
 
 ### Installation
 
-1. *Clone the repository*
-   bash
+1. **Clone the repository**
+   ```bash
    git clone https://github.com/your-username/PBSC-Ignite.git
    cd PBSC-Ignite
-   
+   ```
 
-2. *Install dependencies*
-   bash
+2. **Install dependencies**
+   ```bash
    pip install -r requirements.txt
-   
+   ```
 
-3. *Set up environment variables*
+3. **Set up environment variables**
    
-   Create a .env file in the root directory:
-   env
+   Create a `.env` file in the root directory:
+   ```env
    # Flask Configuration
    SECRET_KEY=your-secret-key-here
    
@@ -156,25 +156,25 @@ PBSC-Ignite/
    # LinkedIn API (Legacy - Optional)
    LINKEDIN_CLIENT_ID=your-linkedin-client-id
    LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
-   
+   ```
 
-4. *Start MongoDB and Redis*
-   bash
+4. **Start MongoDB and Redis**
+   ```bash
    # Start MongoDB
    mongod
    
    # Start Redis (optional)
    redis-server
-   
+   ```
 
-5. *Run the application*
-   bash
+5. **Run the application**
+   ```bash
    python run.py
-   
+   ```
 
-6. *Access the application*
+6. **Access the application**
    
-   Open your browser and navigate to http://localhost:5000
+   Open your browser and navigate to `http://localhost:5000`
 
 ## 📖 Usage
 
@@ -220,41 +220,41 @@ PBSC-Ignite/
 ## 🔧 Configuration
 
 ### Database Collections
-- users: User profiles and authentication data
-- learning_progress: Progress tracking and achievements
-- linkedin_data: LinkedIn profile information via Unipile
-- linkedin_posts: Achievement sharing history and analytics
-- companies: Company information database
-- social_posts: Generated post templates and performance metrics
+- `users`: User profiles and authentication data
+- `learning_progress`: Progress tracking and achievements
+- `linkedin_data`: LinkedIn profile information via Unipile
+- `linkedin_posts`: Achievement sharing history and analytics
+- `companies`: Company information database
+- `social_posts`: Generated post templates and performance metrics
 
 ### Caching Strategy
-- *Profile Data*: 30 minutes cache duration
-- *Claude Sonnet 4 Responses*: 12-24 hours for complex reasoning tasks
-- *LLM Responses*: 6-24 hours based on content type
-- *API Responses*: 12 hours for external APIs
-- *Roadmap Data*: 1 hour cache duration
-- *Generated Posts*: 2 hours cache duration
+- **Profile Data**: 30 minutes cache duration
+- **Claude Sonnet 4 Responses**: 12-24 hours for complex reasoning tasks
+- **LLM Responses**: 6-24 hours based on content type
+- **API Responses**: 12 hours for external APIs
+- **Roadmap Data**: 1 hour cache duration
+- **Generated Posts**: 2 hours cache duration
 
 ### AI Integration Hierarchy
-- *AWS Bedrock (Claude Sonnet 4)*: Primary for complex reasoning, tutoring, and content generation
-- *Groq*: Fast inference for real-time interactions and quick responses
-- *Llama*: Structured responses and template generation
-- *Perplexity*: Real-time information and research tasks
+- **AWS Bedrock (Claude Sonnet 4)**: Primary for complex reasoning, tutoring, and content generation
+- **Groq**: Fast inference for real-time interactions and quick responses
+- **Llama**: Structured responses and template generation
+- **Perplexity**: Real-time information and research tasks
 
 ### Social Integration
-- *Unipile API*: Primary LinkedIn integration for posting and profile management
-- *Post Generation*: AI-powered content creation based on user achievements
-- *Engagement Tracking*: Monitor post performance and professional network growth
+- **Unipile API**: Primary LinkedIn integration for posting and profile management
+- **Post Generation**: AI-powered content creation based on user achievements
+- **Engagement Tracking**: Monitor post performance and professional network growth
 
 ## 🔐 Security Features
 
-- *Password Hashing*: bcrypt for secure password storage
-- *Session Management*: Flask session-based authentication
-- *Input Validation*: Comprehensive data validation
-- *API Rate Limiting*: Built-in throttling protection
-- *Environment Variables*: Secure configuration management
-- *AWS IAM*: Secure Bedrock access with minimal permissions
-- *Unipile Security*: OAuth-based LinkedIn authentication
+- **Password Hashing**: bcrypt for secure password storage
+- **Session Management**: Flask session-based authentication
+- **Input Validation**: Comprehensive data validation
+- **API Rate Limiting**: Built-in throttling protection
+- **Environment Variables**: Secure configuration management
+- **AWS IAM**: Secure Bedrock access with minimal permissions
+- **Unipile Security**: OAuth-based LinkedIn authentication
 
 ## 📊 Monitoring & Analytics
 
@@ -282,9 +282,9 @@ PBSC-Ignite/
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (git checkout -b feature/amazing-feature)
-3. Commit your changes (git commit -m 'Add amazing feature')
-4. Push to the branch (git push origin feature/amazing-feature)
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ### Development Guidelines
@@ -299,8 +299,8 @@ PBSC-Ignite/
 
 ### Assessment API
 
-*Generate assessment with Claude Sonnet 4*
-http
+**Generate assessment with Claude Sonnet 4**
+```http
 POST /api/assessment/generate
 Content-Type: application/json
 
@@ -310,10 +310,10 @@ Content-Type: application/json
     "user_id": "user123",
     "use_advanced_reasoning": true
 }
+```
 
-
-*Submit assessment*
-http
+**Submit assessment**
+```http
 POST /api/assessment/submit
 Content-Type: application/json
 
@@ -323,12 +323,12 @@ Content-Type: application/json
     "answers": {...},
     "assessment_type": "theory"
 }
-
+```
 
 ### Social Sharing API
 
-*Generate LinkedIn post*
-http
+**Generate LinkedIn post**
+```http
 POST /api/social/generate-post
 Content-Type: application/json
 
@@ -341,10 +341,10 @@ Content-Type: application/json
         "skills_learned": ["HTML", "CSS", "JavaScript"]
     }
 }
+```
 
-
-*Publish to LinkedIn via PBSC-Ignite using Unipile API*
-http
+**Publish to LinkedIn via PBSC-Ignite using Unipile API**
+```http
 POST /api/social/publish-linkedin
 Content-Type: application/json
 
@@ -353,17 +353,17 @@ Content-Type: application/json
     "user_id": "user123",
     "include_media": true
 }
+```
 
-
-*Get posting analytics*
-http
+**Get posting analytics**
+```http
 GET /api/social/analytics/{user_id}
-
+```
 
 ### Tutoring API
 
-*Claude Sonnet 4 tutoring session*
-http
+**Claude Sonnet 4 tutoring session**
+```http
 POST /api/tutor/advanced-help
 Content-Type: application/json
 
@@ -373,12 +373,12 @@ Content-Type: application/json
     "context": "current learning phase",
     "preferred_explanation_style": "detailed_with_examples"
 }
-
+```
 
 ### Roadmap API
 
-*Update task completion*
-http
+**Update task completion**
+```http
 POST /api/roadmap/task/complete
 Content-Type: application/json
 
@@ -389,10 +389,10 @@ Content-Type: application/json
     "completed": true,
     "trigger_social_sharing": true
 }
+```
 
-
-*Adaptive analysis with Claude Sonnet 4*
-http
+**Adaptive analysis with Claude Sonnet 4**
+```http
 POST /api/roadmap/adaptive-analysis
 Content-Type: application/json
 
@@ -400,7 +400,7 @@ Content-Type: application/json
     "user_id": "user123",
     "use_advanced_reasoning": true
 }
-
+```
 
 ## 🐛 Troubleshooting
 
@@ -420,7 +420,7 @@ Content-Type: application/json
 
 #### MongoDB Connection Issues
 - Ensure MongoDB is running
-- Check MONGO_URI in environment variables
+- Check `MONGO_URI` in environment variables
 - Verify database permissions
 
 #### Redis Cache Issues
@@ -454,13 +454,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- *Flask Community* for the excellent web framework
-- *MongoDB* for flexible data storage
-- *Redis* for high-performance caching
-- *AWS Bedrock* for providing access to Claude Sonnet 4
-- *Unipile* for seamless LinkedIn integration
-- *Groq, Perplexity, and Llama* for AI capabilities
-- *Anthropic* for Claude Sonnet 4's advanced reasoning capabilities
+- **Flask Community** for the excellent web framework
+- **MongoDB** for flexible data storage
+- **Redis** for high-performance caching
+- **AWS Bedrock** for providing access to Claude Sonnet 4
+- **Unipile** for seamless LinkedIn integration
+- **Groq, Perplexity, and Llama** for AI capabilities
+- **Anthropic** for Claude Sonnet 4's advanced reasoning capabilities
 
 ## 📞 Support
 
@@ -473,4 +473,4 @@ For support and questions:
 
 ---
 
-Made with ❤ for empowering learners and advancing careers through AI-powered education with cutting-edge reasoning capabilities.
+*Made with ❤️ for empowering learners and advancing careers through AI-powered education with cutting-edge reasoning capabilities.*
