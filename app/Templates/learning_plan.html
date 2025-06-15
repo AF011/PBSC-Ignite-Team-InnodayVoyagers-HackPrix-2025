@@ -1,0 +1,2885 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Learning Journey - {{ phase.name }}
+{% endblock %}
+
+{% block content %}
+<div class="learning-container">
+    <!-- Header Section -->
+    <!-- Add this script tag in your HTML head or before the header section -->
+<script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+
+<div class="header-section">
+    <div class="breadcrumb-nav">
+        <a href="{{ url_for('roadmap_bp.roadmap') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Roadmap</span>
+        </a>
+    </div>
+    
+    <div class="header-content">
+        <!-- Left side: Content -->
+        <div class="header-left">
+            <div class="phase-badge">
+                <i class="fas fa-graduation-cap"></i>
+                Learning Phase
+            </div>
+            <h1 class="phase-title">{{ phase.name }}</h1>
+            <p class="phase-description">{{ phase.description }}</p>
+            
+            <!-- Skills Tags -->
+            <div class="skills-container">
+                <span class="skills-label">Skills you'll master:</span>
+                <div class="skills-tags">
+                    {% for skill in phase.skills %}
+                        <span class="skill-tag">
+                            <i class="fas fa-star"></i>
+                            {{ skill }}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right side: Lottie Animation -->
+        <div class="header-right">
+           <dotlottie-player
+            src="https://lottie.host/ee0e0ce3-2b3f-47a6-819a-46520d4c8a0f/RCbq4raqSg.lottie"
+            background="transparent"
+            speed="1"
+            style="width: 450px; height: 450px"
+            loop
+            autoplay
+            ></dotlottie-player>
+        </div>
+    </div>
+</div>
+
+<!-- Add this CSS to your stylesheet -->
+<style>
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.header-left {
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.header-right {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+    
+    .header-right dotlottie-player {
+        width: 300px !important;
+        height: 300px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-right dotlottie-player {
+        width: 250px !important;
+        height: 250px !important;
+    }
+}
+</style>
+
+    <!-- Progress Overview -->
+    <div class="progress-overview">
+        {% set total_weeks = phase.learning_plan.weekly_schedule|length %}
+        {% set total_tasks = 0 %}
+        {% set completed_tasks = 0 %}
+        {% for week in phase.learning_plan.weekly_schedule %}
+            {% set total_tasks = total_tasks + week.daily_tasks|length %}
+            {% for task in week.daily_tasks %}
+                {% if task.completed %}
+                    {% set completed_tasks = completed_tasks + 1 %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        {% set overall_progress = (completed_tasks / total_tasks * 100)|round if total_tasks > 0 else 0 %}
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ total_weeks }}</div>
+                    <div class="stat-label">Total Weeks</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ completed_tasks }}/{{ total_tasks }}</div>
+                    <div class="stat-label">Tasks Completed</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ overall_progress }}%</div>
+                    <div class="stat-label">Overall Progress</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-number">{{ phase.skills|length }}</div>
+                    <div class="stat-label">Skills to Master</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overall-progress">
+            <div class="progress-header">
+                <h3>Your Learning Journey</h3>
+                <span class="progress-percentage">{{ overall_progress }}% Complete</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: {{ overall_progress }}%;">
+                    <div class="progress-glow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Schedule -->
+    <div class="weeks-container">
+        {% for week in phase.learning_plan.weekly_schedule %}
+            {% set weekIndex = loop.index0 %}
+            {% set week_total_tasks = week.daily_tasks|length %}
+            {% set week_completed_tasks = 0 %}
+            {% for task in week.daily_tasks %}
+                {% if task.completed %}
+                    {% set week_completed_tasks = week_completed_tasks + 1 %}
+                {% endif %}
+            {% endfor %}
+            {% set week_progress = (week_completed_tasks / week_total_tasks * 100)|round if week_total_tasks > 0 else 0 %}
+            
+            <div class="week-card {{ 'completed' if week_progress == 100 else '' }}">
+                <div class="week-header">
+                    <div class="week-info">
+                        <div class="week-number">
+                            <i class="fas fa-{{ 'check-circle' if week_progress == 100 else 'play-circle' }}"></i>
+                            Week {{ week.week }}
+                        </div>
+                        <div class="week-progress-mini">
+                            {{ week_completed_tasks }}/{{ week_total_tasks }} tasks • {{ week_progress }}%
+                        </div>
+                    </div>
+                    
+                    <div class="week-actions">
+                        <!-- REPLACE IT WITH THIS (FastAPI URL): -->
+                        <a href="/tutor/{{ phase_id }}/{{ week.week }}" 
+                        class="ai-tutor-btn">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Study Buddy</span>
+                        </a>
+                        
+                        <button class="expand-btn" onclick="toggleWeek({{ weekIndex }})">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="week-progress-bar">
+                    <div class="week-progress-fill" style="width: {{ week_progress }}%;"></div>
+                </div>
+                
+                <div class="week-content" id="week-{{ weekIndex }}">
+                    <!-- Learning Objectives -->
+                    <div class="objectives-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-bullseye"></i>
+                            Learning Goals This Week
+                        </h4>
+                        <div class="objectives-grid">
+                            {% for objective in week.learning_objectives %}
+                                <div class="objective-item">
+                                    <i class="fas fa-target"></i>
+                                    <span>{{ objective }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Daily Tasks -->
+                    <div class="tasks-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-calendar-check"></i>
+                            Daily Learning Path
+                        </h4>
+                        
+                        <div class="daily-timeline">
+                            {% for task in week.daily_tasks %}
+                                {% set dayIndex = loop.index0 %}
+                                <div class="day-item {{ 'completed' if task.completed else '' }}">
+                                    <div class="day-marker">
+                                        <div class="day-circle">
+                                            <i class="fas fa-{{ 'check' if task.completed else 'calendar-day' }}"></i>
+                                        </div>
+                                        <div class="day-line"></div>
+                                    </div>
+                                    
+                                    <div class="day-content">
+                                        <div class="day-header">
+                                            <div class="day-info">
+                                                <h5>Day {{ task.day }}</h5>
+                                                <span class="duration-badge">
+                                                    <i class="fas fa-clock"></i>
+                                                    {{ task.duration_hours }} hours
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="completion-toggle">
+                                                <input class="task-checkbox" 
+                                                       type="checkbox" 
+                                                       id="taskCheck_{{ week.week }}_{{ task.day }}"
+                                                       data-week="{{ weekIndex }}"
+                                                       data-day="{{ dayIndex }}"
+                                                       {% if task.completed %}checked{% endif %}>
+                                                <label for="taskCheck_{{ week.week }}_{{ task.day }}" class="toggle-label">
+                                                    <span class="toggle-slider"></span>
+                                                    <span class="toggle-text">{{ 'Completed!' if task.completed else 'Mark Complete' }}</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="day-tasks">
+                                            <div class="tasks-list">
+                                                <h6>Today's Tasks:</h6>
+                                                {% for task_item in task.tasks %}
+                                                    <div class="task-item">
+                                                        <i class="fas fa-arrow-right"></i>
+                                                        <span>{{ task_item }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            
+                                            <div class="resources-list">
+                                                <h6>Learning Resources:</h6>
+                                                {% for resource in task.resources %}
+                                                    <div class="resource-item">
+                                                        <i class="fas fa-book-open"></i>
+                                                        <span>{{ resource }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Assessment Section - NEW FEATURE -->
+                                        <div class="assessment-section-new">
+                                            <div class="assessment-divider-new">
+                                                <span>Assessment</span>
+                                            </div>
+                                            
+<!-- REPLACE your assessment button in the learning plan template with this: -->
+
+<button class="assessment-btn-new" 
+        data-phase-id="{{ phase_id }}" 
+        data-day="{{ task.day or loop.index }}"
+        data-week-index="{{ loop.index0 }}"
+        data-day-index="{{ loop.index0 }}"
+        id="assessment-btn-{{ task.day or loop.index }}">
+    <div class="assessment-content-new">
+        <i class="fas fa-clipboard-check"></i>
+        <span class="assessment-text">Take Day {{ task.day or loop.index }} Assessment</span>
+        <div class="assessment-status">
+            <span class="status-locked">🔒 Locked</span>
+            <span class="status-unlocked">✅ Available</span>
+            <span class="status-completed">🏆 Completed</span>
+        </div>
+    </div>
+</button>
+
+<!-- LinkedIn Connection Modal -->
+<div class="linkedin-modal" id="linkedinModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>🔗 Connect LinkedIn for Achievement Sharing</h3>
+            <button onclick="closeLinkedInModal()" class="modal-close">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="linkedin-setup-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Create Unipile Account</h4>
+                        <p>Go to <a href="https://www.unipile.com/" target="_blank">Unipile.com</a> and create an account</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Connect Your LinkedIn</h4>
+                        <p>In Unipile dashboard, click "Add Account" and connect your LinkedIn profile</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Get Your Account ID</h4>
+                        <p>Copy your LinkedIn Account ID from Unipile dashboard</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Enter Details Below</h4>
+                        <form id="linkedinConnectForm">
+                            <div class="form-group">
+                                <label for="linkedinAccountId">LinkedIn Account ID (from Unipile):</label>
+                                <input type="text" id="linkedinAccountId" placeholder="e.g., a1b2c3d4-e5f6-7890-1234-567890abcdef" required>
+                                <small>This is NOT your LinkedIn username. Get this from Unipile dashboard.</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="linkedinProfileUrl">Your LinkedIn Profile URL:</label>
+                                <input type="url" id="linkedinProfileUrl" placeholder="https://www.linkedin.com/in/your-profile" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="enableAutoSharing" checked>
+                                    Automatically share achievements when I complete tasks/assessments
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="saveLinkedInConnection()" class="btn-save">Save Connection</button>
+            <button onclick="closeLinkedInModal()" class="btn-cancel">Maybe Later</button>
+        </div>
+    </div>
+</div>
+
+<!-- LinkedIn Achievement Notification -->
+<div class="linkedin-achievement-notification" id="linkedinNotification" style="display: none;">
+    <div class="notification-content">
+        <div class="notification-icon">
+            <i class="fab fa-linkedin"></i>
+        </div>
+        <div class="notification-text">
+            <h4>🎉 Share Your Achievement!</h4>
+            <p id="achievementText">You've completed an important learning milestone!</p>
+            <div class="notification-actions">
+                <button onclick="shareToLinkedIn()" class="btn-share">
+                    <i class="fab fa-linkedin"></i>
+                    Share on LinkedIn
+                </button>
+                <button onclick="dismissAchievementNotification()" class="btn-dismiss">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LinkedIn Sharing Status -->
+<div class="linkedin-status" id="linkedinStatus" style="display: none;">
+    <div class="status-content">
+        <div class="status-icon">
+            <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <div class="status-text">
+            <span id="statusMessage">Generating your achievement post...</span>
+        </div>
+    </div>
+</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Weekly Assessment -->
+                    <div class="assessment-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-clipboard-check"></i>
+                            Week {{ week.week }} Knowledge Check
+                        </h4>
+                        <div class="assessment-card">
+                            <div class="assessment-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="assessment-content">
+                                <p>{{ week.assessment }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<script>
+    // Maintain original Flask functionality
+    // LinkedIn Integration JavaScript
+
+let currentAchievementData = null;
+let linkedinConnectionStatus = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔗 LinkedIn integration loaded');
+    checkLinkedInConnectionStatus();
+});
+
+function checkLinkedInConnectionStatus() {
+    // Check if user has LinkedIn connected
+    fetch('/api/user/linkedin-status')
+        .then(response => response.json())
+        .then(data => {
+            linkedinConnectionStatus = data.connected || false;
+            updateLinkedInUI();
+        })
+        .catch(error => {
+            console.log('ℹ️ LinkedIn status check failed (non-critical):', error);
+        });
+}
+
+function updateLinkedInUI() {
+    const connectBtn = document.getElementById('linkedinConnectBtn');
+    if (connectBtn) {
+        if (linkedinConnectionStatus) {
+            connectBtn.innerHTML = '<i class="fab fa-linkedin"></i> LinkedIn Connected';
+            connectBtn.classList.add('connected');
+            connectBtn.onclick = showLinkedInSettings;
+        } else {
+            connectBtn.innerHTML = '<i class="fab fa-linkedin"></i> Connect LinkedIn';
+            connectBtn.classList.remove('connected');
+            connectBtn.onclick = showLinkedInModal;
+        }
+    }
+}
+
+function showLinkedInModal() {
+    document.getElementById('linkedinModal').style.display = 'flex';
+    // Auto-focus first input
+    setTimeout(() => {
+        document.getElementById('linkedinAccountId').focus();
+    }, 300);
+}
+
+function closeLinkedInModal() {
+    document.getElementById('linkedinModal').style.display = 'none';
+}
+
+function saveLinkedInConnection() {
+    const accountId = document.getElementById('linkedinAccountId').value.trim();
+    const profileUrl = document.getElementById('linkedinProfileUrl').value.trim();
+    const autoSharing = document.getElementById('enableAutoSharing').checked;
+    
+    if (!accountId || !profileUrl) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    // Validate Account ID format (should be UUID-like)
+    if (!accountId.match(/^[a-f0-9-]{36}$/i) && !accountId.match(/^[a-zA-Z0-9-_]{20,}$/)) {
+        alert('Please enter a valid Unipile Account ID (not your LinkedIn username)');
+        return;
+    }
+    
+    // Save to backend
+    const connectionData = {
+        linkedin_account_id: accountId,
+        linkedin_profile_url: profileUrl,
+        auto_sharing_enabled: autoSharing
+    };
+    
+    fetch('/api/user/connect-linkedin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(connectionData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            linkedinConnectionStatus = true;
+            updateLinkedInUI();
+            closeLinkedInModal();
+            showSuccessMessage('LinkedIn connected successfully! 🎉');
+        } else {
+            alert('Failed to save LinkedIn connection: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('LinkedIn connection error:', error);
+        alert('Error connecting LinkedIn. Please try again.');
+    });
+}
+
+function showAchievementNotification(achievementData) {
+    currentAchievementData = achievementData;
+    
+    const notification = document.getElementById('linkedinNotification');
+    const achievementText = document.getElementById('achievementText');
+    
+    // Set achievement text based on type
+    let message = '';
+    if (achievementData.type === 'task_completion') {
+        message = `You completed Day ${achievementData.day} of ${achievementData.phase_name}! Share your learning progress with your network.`;
+    } else if (achievementData.type === 'assessment_passed') {
+        message = `Congratulations! You passed the Day ${achievementData.day} assessment with ${achievementData.score}%! 🎉`;
+    } else if (achievementData.type === 'phase_completed') {
+        message = `Amazing! You completed the entire ${achievementData.phase_name} phase! This is a major milestone worth sharing.`;
+    }
+    
+    achievementText.textContent = message;
+    notification.style.display = 'block';
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+        if (notification.style.display === 'block') {
+            dismissAchievementNotification();
+        }
+    }, 10000);
+}
+
+function dismissAchievementNotification() {
+    document.getElementById('linkedinNotification').style.display = 'none';
+    currentAchievementData = null;
+}
+
+function shareToLinkedIn() {
+    if (!currentAchievementData) {
+        alert('No achievement data available');
+        return;
+    }
+    
+    if (!linkedinConnectionStatus) {
+        alert('Please connect your LinkedIn account first');
+        showLinkedInModal();
+        return;
+    }
+    
+    // Hide notification and show status
+    dismissAchievementNotification();
+    showLinkedInStatus('Generating your achievement post...');
+    
+    // Call backend to generate and publish
+    fetch('/api/linkedin/publish-achievement', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(currentAchievementData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLinkedInStatus();
+        
+        if (data.status === 'success') {
+            showSuccessMessage('🎉 Achievement shared on LinkedIn successfully!');
+            // Show celebration animation
+            document.body.classList.add('achievement-celebration');
+            setTimeout(() => {
+                document.body.classList.remove('achievement-celebration');
+            }, 2000);
+        } else {
+            showErrorMessage('Failed to share on LinkedIn: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideLinkedInStatus();
+        console.error('LinkedIn sharing error:', error);
+        showErrorMessage('Network error while sharing to LinkedIn');
+    });
+}
+
+function showLinkedInStatus(message) {
+    const status = document.getElementById('linkedinStatus');
+    const statusMessage = document.getElementById('statusMessage');
+    
+    statusMessage.textContent = message;
+    status.style.display = 'block';
+}
+
+function hideLinkedInStatus() {
+    document.getElementById('linkedinStatus').style.display = 'none';
+}
+
+function showLinkedInSettings() {
+    // Show settings modal for connected users
+    alert('LinkedIn Settings (feature coming soon)');
+}
+
+// Enhanced task completion with LinkedIn integration
+function completeTaskWithLinkedIn(taskData) {
+    // Call original task completion function
+    return completeTaskWithAdaptive(taskData)
+        .then(response => {
+            // If task completed successfully and user has LinkedIn connected
+            if (response.status === 'success' && response.auto_completed && linkedinConnectionStatus) {
+                // Check if user has auto-sharing enabled
+                checkAutoSharingPreference()
+                    .then(autoSharingEnabled => {
+                        if (autoSharingEnabled) {
+                            // Show achievement notification
+                            const achievementData = {
+                                type: 'task_completion',
+                                phase_name: response.task_details?.phase_name || 'Learning Phase',
+                                task_name: `Day ${response.task_details?.day || 1} Task`,
+                                day: response.task_details?.day || 1,
+                                skills: response.skills || [],
+                                total_progress: response.progress?.percentage || 0
+                            };
+                            
+                            setTimeout(() => {
+                                showAchievementNotification(achievementData);
+                            }, 2000); // Show after success animation
+                        }
+                    });
+            }
+            
+            return response;
+        });
+}
+
+function checkAutoSharingPreference() {
+    return fetch('/api/user/linkedin-preferences')
+        .then(response => response.json())
+        .then(data => data.auto_sharing_enabled || false)
+        .catch(() => false);
+}
+
+// Enhanced assessment completion with LinkedIn integration
+function showEvaluationResultsWithLinkedIn(data) {
+    // Call original function
+    showEvaluationResults(data);
+    
+    // If assessment passed and LinkedIn connected
+    if (data.status === 'success' && (data.evaluation?.score || 0) >= 70 && linkedinConnectionStatus) {
+        checkAutoSharingPreference()
+            .then(autoSharingEnabled => {
+                if (autoSharingEnabled) {
+                    const achievementData = {
+                        type: 'assessment_passed',
+                        phase_name: data.phase_name || 'Learning Phase',
+                        day: data.day || 1,
+                        score: data.evaluation?.score || 0,
+                        skills: data.skills || [],
+                        total_progress: data.progress?.percentage || 0
+                    };
+                    
+                    setTimeout(() => {
+                        showAchievementNotification(achievementData);
+                    }, 3000); // Show after evaluation results
+                }
+            });
+    }
+}
+
+// Add LinkedIn connect button to existing UI
+function addLinkedInButtonToHeader() {
+    const headerActions = document.querySelector('.section-header');
+    if (headerActions && !document.getElementById('linkedinConnectBtn')) {
+        const linkedinBtn = document.createElement('button');
+        linkedinBtn.id = 'linkedinConnectBtn';
+        linkedinBtn.className = 'linkedin-connect-btn';
+        linkedinBtn.innerHTML = '<i class="fab fa-linkedin"></i> Connect LinkedIn';
+        linkedinBtn.onclick = showLinkedInModal;
+        
+        headerActions.appendChild(linkedinBtn);
+    }
+}
+
+// Initialize LinkedIn button when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(addLinkedInButtonToHeader, 1000);
+});
+
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification-linkedin';
+    notification.innerHTML = `
+        <div class="success-indicator">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        color: 'white',
+        padding: '1rem 1.5rem',
+        borderRadius: '12px',
+        boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
+        zIndex: '10003',
+        animation: 'slideDown 0.5s ease-out'
+    });
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideUp 0.5s ease-in';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 500);
+    }, 4000);
+}
+
+function showErrorMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'error-notification-linkedin';
+    notification.innerHTML = `
+        <div class="error-indicator">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+        color: 'white',
+        padding: '1rem 1.5rem',
+        borderRadius: '12px',
+        boxShadow: '0 8px 24px rgba(239, 68, 68, 0.4)',
+        zIndex: '10003',
+        animation: 'slideDown 0.5s ease-out'
+    });
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideUp 0.5s ease-in';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 500);
+    }, 5000);
+}
+
+// Add animations
+const animationStyles = document.createElement('style');
+animationStyles.textContent = `
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+    }
+`;
+document.head.appendChild(animationStyles);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize week toggle states
+        initializeWeekStates();
+        
+        // Task completion functionality (original Flask code preserved)
+        const taskCheckboxes = document.querySelectorAll('.task-checkbox');
+        
+        taskCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const weekIndex = this.getAttribute('data-week');
+                const dayIndex = this.getAttribute('data-day');
+                const completed = this.checked;
+                
+                // Update the label text
+                const label = this.nextElementSibling.querySelector('.toggle-text');
+                label.textContent = completed ? 'Completed!' : 'Mark Complete';
+                
+                // Add loading state
+                this.disabled = true;
+                label.textContent = 'Saving...';
+                
+                // Send update to server (original Flask endpoint)
+                fetch('/complete-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phase_id: '{{ phase_id }}',
+                        week_index: weekIndex,
+                        day_index: dayIndex,
+                        completed: completed
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.disabled = false;
+                    
+                    if (data.status !== 'success') {
+                        console.error('Error updating task:', data.message);
+                        showNotification('Error updating task. Please try again.', 'error');
+                        
+                        // Revert the checkbox state
+                        this.checked = !completed;
+                        label.textContent = !completed ? 'Completed!' : 'Mark Complete';
+                    } else {
+                        label.textContent = completed ? 'Completed!' : 'Mark Complete';
+                        showNotification('Progress saved successfully!', 'success');
+                        
+                        // 🚀 NEW: LINKEDIN INTEGRATION TRIGGER
+                        if (completed && linkedinConnectionStatus) {
+                            console.log('🔗 Task completed - checking LinkedIn auto-sharing...');
+                            
+                            // Check if user has auto-sharing enabled
+                            checkAutoSharingPreference()
+                                .then(autoSharingEnabled => {
+                                    if (autoSharingEnabled) {
+                                        console.log('✅ Auto-sharing enabled - creating achievement...');
+                                        
+                                        // Create achievement data
+                                        const achievementData = {
+                                            type: 'task_completion',
+                                            phase_name: '{{ phase.name }}',
+                                            day: parseInt(dayIndex) + 1,
+                                            skills: {{ phase.skills | tojson }},
+                                            user_name: '{{ user.name | default("Student") }}'
+                                        };
+                                        
+                                        // Show achievement notification after 2 seconds
+                                        setTimeout(() => {
+                                            console.log('🎉 Showing LinkedIn achievement notification...');
+                                            showAchievementNotification(achievementData);
+                                        }, 2000);
+                                    } else {
+                                        console.log('ℹ️ Auto-sharing disabled');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log('⚠️ Auto-sharing check failed:', error);
+                                });
+                        } else if (completed && !linkedinConnectionStatus) {
+                            console.log('ℹ️ Task completed but LinkedIn not connected');
+                        }
+                        
+                        // Update progress bars with animation
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    console.error('Error:', error);
+                    showNotification('Error updating task. Please try again.', 'error');
+                    
+                    // Revert the checkbox state
+                    this.checked = !completed;
+                    label.textContent = !completed ? 'Completed!' : 'Mark Complete';
+                });
+            });
+        });        
+    });
+
+    // 🚀 ADD: Quick Test Button (for demo purposes)
+function addLinkedInTestButton() {
+    // Add a test button to header for immediate testing
+    const headerSection = document.querySelector('.header-section');
+    if (headerSection && !document.getElementById('linkedinTestBtn')) {
+        const testBtn = document.createElement('button');
+        testBtn.id = 'linkedinTestBtn';
+        testBtn.className = 'linkedin-connect-btn';
+        testBtn.innerHTML = '<i class="fab fa-linkedin"></i> Test LinkedIn Post';
+        testBtn.style.marginTop = '1rem';
+        testBtn.onclick = function() {
+            console.log('🧪 Testing LinkedIn post...');
+            
+            const testAchievement = {
+                type: 'task_completion',
+                phase_name: '{{ phase.name }}',
+                day: 1,
+                skills: {{ phase.skills | tojson }},
+                user_name: '{{ user.name | default("Demo User") }}'
+            };
+            
+            showAchievementNotification(testAchievement);
+        };
+        
+        headerSection.appendChild(testBtn);
+    }
+}
+
+// Initialize test button when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(addLinkedInTestButton, 1000);
+    
+    // 🚀 OPTIONAL: Auto-trigger for demo (remove for production)
+    // Uncomment this to automatically show LinkedIn notification for demo:
+    /*
+    setTimeout(() => {
+        if (linkedinConnectionStatus) {
+            const demoAchievement = {
+                type: 'task_completion',
+                phase_name: '{{ phase.name }}',
+                day: 1,
+                skills: {{ phase.skills | tojson }},
+                user_name: '{{ user.name | default("Demo User") }}'
+            };
+            
+            console.log('🎬 Demo: Auto-showing LinkedIn notification...');
+            showAchievementNotification(demoAchievement);
+        }
+    }, 5000); // Show after 5 seconds for demo
+    */
+});
+    
+    function toggleWeek(weekIndex) {
+        const weekContent = document.getElementById(`week-${weekIndex}`);
+        const expandBtn = weekContent.previousElementSibling.querySelector('.expand-btn i');
+        
+        if (weekContent.classList.contains('expanded')) {
+            weekContent.classList.remove('expanded');
+            expandBtn.style.transform = 'rotate(0deg)';
+        } else {
+            weekContent.classList.add('expanded');
+            expandBtn.style.transform = 'rotate(180deg)';
+        }
+        
+        // Save state to localStorage
+        const expandedWeeks = JSON.parse(localStorage.getItem('expandedWeeks') || '[]');
+        if (weekContent.classList.contains('expanded')) {
+            if (!expandedWeeks.includes(weekIndex)) expandedWeeks.push(weekIndex);
+        } else {
+            const index = expandedWeeks.indexOf(weekIndex);
+            if (index > -1) expandedWeeks.splice(index, 1);
+        }
+        localStorage.setItem('expandedWeeks', JSON.stringify(expandedWeeks));
+    }
+    
+    function initializeWeekStates() {
+        const expandedWeeks = JSON.parse(localStorage.getItem('expandedWeeks') || '[0]'); // First week expanded by default
+        
+        expandedWeeks.forEach(weekIndex => {
+            const weekContent = document.getElementById(`week-${weekIndex}`);
+            const expandBtn = document.querySelector(`[onclick="toggleWeek(${weekIndex})"] i`);
+            
+            if (weekContent && expandBtn) {
+                weekContent.classList.add('expanded');
+                expandBtn.style.transform = 'rotate(180deg)';
+            }
+        });
+    }
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+    // ADD this JavaScript AFTER your existing script section
+
+// NEW ASSESSMENT FEATURE JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNewAssessmentSystem();
+});
+
+function initializeNewAssessmentSystem() {
+    console.log('🚀 Initializing NEW Assessment System...');
+    
+    // Get phase ID from URL
+    const phaseId = getCurrentPhaseId();
+    
+    if (phaseId !== null) {
+        checkNewAssessmentStatus(phaseId);
+        setupNewAssessmentHandlers();
+    }
+}
+
+function getCurrentPhaseId() {
+    // Extract from URL like /learning-plan/0
+    const urlParts = window.location.pathname.split('/');
+    const learningPlanIndex = urlParts.indexOf('learning-plan');
+    
+    if (learningPlanIndex !== -1 && urlParts[learningPlanIndex + 1]) {
+        return parseInt(urlParts[learningPlanIndex + 1]);
+    }
+    
+    console.warn('Could not find phase ID in URL');
+    return 0; // Default to phase 0
+}
+
+function checkNewAssessmentStatus(phaseId) {
+    console.log(`🔍 Checking assessment status for Phase ${phaseId}...`);
+    
+    fetch(`/api/assessment/unlock-status/${phaseId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                updateNewAssessmentButtons(data.unlock_status);
+            } else {
+                console.error('❌ Failed to get unlock status:', data.error);
+                // If API fails, unlock first assessment
+                updateNewAssessmentButtons({
+                    unlocked_days: [1],
+                    completed_assessments: [],
+                    current_day: 1
+                });
+            }
+        })
+        .catch(error => {
+            console.error('❌ Assessment status error:', error);
+            // If API fails, unlock first assessment
+            updateNewAssessmentButtons({
+                unlocked_days: [1],
+                completed_assessments: [],
+                current_day: 1
+            });
+        });
+}
+
+function updateNewAssessmentButtons(unlockStatus) {
+    console.log('📊 Updating assessment buttons:', unlockStatus);
+    
+    const { unlocked_days, completed_assessments, current_day } = unlockStatus;
+    
+    // Update each assessment button
+    document.querySelectorAll('.assessment-btn-new').forEach(btn => {
+        const day = parseInt(btn.dataset.day);
+        
+        // Remove all state classes
+        btn.classList.remove('locked', 'unlocked', 'completed');
+        
+        if (completed_assessments.includes(day)) {
+            btn.classList.add('completed');
+            btn.disabled = false;
+        } else if (unlocked_days.includes(day)) {
+            btn.classList.add('unlocked');
+            btn.disabled = false;
+        } else {
+            btn.classList.add('locked');
+            btn.disabled = true;
+        }
+    });
+}
+
+function setupNewAssessmentHandlers() {
+    document.querySelectorAll('.assessment-btn-new').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (this.disabled || this.classList.contains('locked')) {
+                showNewAssessmentMessage('Assessment locked! Complete previous assessments first.');
+                return;
+            }
+            
+            const phaseId = this.dataset.phaseId;
+            const day = this.dataset.day;
+            
+            // Navigate to assessment page
+            window.location.href = `/assessment/take/${phaseId}/${day}`;
+        });
+    });
+}
+
+function showNewAssessmentMessage(message) {
+    // Simple alert for now
+    alert(message);
+}
+</script>
+
+<style>
+   /* Enhanced Learning Plan CSS - Blue Theme with Sketch Effects & Glow */
+/* LinkedIn Integration Styles */
+
+.linkedin-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.linkedin-modal .modal-content {
+    background: white;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.linkedin-modal .modal-header {
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 20px 20px 0 0;
+}
+
+.linkedin-modal .modal-header h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.linkedin-modal .modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.linkedin-modal .modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.linkedin-modal .modal-body {
+    padding: 2rem;
+}
+
+.linkedin-setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.step-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.step-content p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.step-content a {
+    color: #0077b5;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.step-content a:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="url"]:focus {
+    outline: none;
+    border-color: #0077b5;
+    box-shadow: 0 0 0 3px rgba(0, 119, 181, 0.1);
+}
+
+.form-group small {
+    display: block;
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.linkedin-modal .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 119, 181, 0.3);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+/* LinkedIn Achievement Notification */
+.linkedin-achievement-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border: 2px solid #0077b5;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 12px 32px rgba(0, 119, 181, 0.2);
+    backdrop-filter: blur(20px);
+    max-width: 400px;
+    z-index: 10001;
+    animation: slideInRight 0.5s ease-out;
+}
+
+.notification-content {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.notification-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(0, 119, 181, 0.3);
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-text h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.notification-text p {
+    margin: 0 0 1rem 0;
+    color: #64748b;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-share {
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-share:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 119, 181, 0.3);
+}
+
+.btn-dismiss {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-dismiss:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* LinkedIn Status Indicator */
+.linkedin-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border: 2px solid #0077b5;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 119, 181, 0.2);
+    backdrop-filter: blur(20px);
+    z-index: 10002;
+    min-width: 300px;
+}
+
+.status-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-icon {
+    color: #0077b5;
+    font-size: 1.25rem;
+}
+
+.status-text {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* LinkedIn Connect Button in Header */
+.linkedin-connect-btn {
+    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 119, 181, 0.3);
+}
+
+.linkedin-connect-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 119, 181, 0.4);
+}
+
+.linkedin-connect-btn.connected {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.linkedin-connect-btn.connected:hover {
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+/* Achievement Success Animation */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.achievement-celebration {
+    animation: bounceIn 0.6s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .linkedin-modal .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .linkedin-achievement-notification {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .notification-actions {
+        justify-content: center;
+    }
+    
+    .linkedin-status {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+}
+
+/* Integration with existing buttons */
+.assessment-btn-new.linkedin-enabled::after {
+    content: "📱";
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.day-item.completed .linkedin-share-indicator {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    background: #0077b5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+}
+
+.learning-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Subtle background lines pattern */
+.learning-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Floating glowing orbs in background */
+.learning-container::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 60% 40%, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: floating-orbs 8s ease-in-out infinite;
+}
+
+@keyframes floating-orbs {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(10px, -10px) scale(1.05); }
+    66% { transform: translate(-10px, 10px) scale(0.95); }
+}
+
+/* Header Section */
+.header-section {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 
+        0 8px 32px rgba(59, 130, 246, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 0 0 1px rgba(59, 130, 246, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Sketch-like decorative lines */
+.header-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(59, 130, 246, 0.3) 20%, 
+        rgba(139, 92, 246, 0.3) 80%, 
+        transparent 100%);
+    animation: sketch-line 3s ease-in-out infinite;
+}
+
+@keyframes sketch-line {
+    0%, 100% { transform: scaleX(0.8); opacity: 0.3; }
+    50% { transform: scaleX(1); opacity: 0.6; }
+}
+
+.breadcrumb-nav {
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #334155;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.2),
+        0 0 20px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    box-shadow: 
+        0 4px 16px rgba(59, 130, 246, 0.4),
+        0 0 20px rgba(59, 130, 246, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 4px 16px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.4); }
+}
+
+.phase-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 50%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+    position: relative;
+}
+
+.phase-description {
+    font-size: 1.125rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.skills-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.skills-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+    border: 1.5px solid rgba(59, 130, 246, 0.3);
+    color: #475569;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 2px 8px rgba(59, 130, 246, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 4px 16px rgba(59, 130, 246, 0.2),
+        0 0 15px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.skill-tag i {
+    color: #3b82f6;
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+}
+
+/* Progress Overview */
+.progress-overview {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 
+        0 8px 32px rgba(59, 130, 246, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+    border-radius: 16px;
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.15),
+        0 0 20px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.4),
+        0 0 15px rgba(59, 130, 246, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.overall-progress {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.7) 100%);
+    border-radius: 16px;
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.progress-header h3 {
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.125rem;
+}
+
+.progress-percentage {
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.125rem;
+}
+
+.progress-bar-container {
+    height: 12px;
+    background: rgba(226, 232, 240, 0.6);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 8px;
+    transition: width 0.8s ease;
+    position: relative;
+    box-shadow: 
+        0 0 20px rgba(59, 130, 246, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    animation: progress-glow 2s ease-in-out infinite;
+}
+
+@keyframes progress-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+}
+
+.progress-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4));
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-20px); }
+    100% { transform: translateX(20px); }
+}
+
+/* Week Cards */
+.weeks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.week-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    overflow: hidden;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Sketch-style week indicators */
+.week-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 1;
+    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.6) 50%, transparent 100%);
+    animation: sketch-indicator 3s ease-in-out infinite;
+}
+
+.week-card:nth-child(1)::before { 
+    background: linear-gradient(90deg, transparent 0%, rgba(239, 68, 68, 0.6) 50%, transparent 100%);
+}
+.week-card:nth-child(2)::before { 
+    background: linear-gradient(90deg, transparent 0%, rgba(249, 115, 22, 0.6) 50%, transparent 100%);
+}
+.week-card:nth-child(3)::before { 
+    background: linear-gradient(90deg, transparent 0%, rgba(234, 179, 8, 0.6) 50%, transparent 100%);
+}
+.week-card:nth-child(4)::before { 
+    background: linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, 0.6) 50%, transparent 100%);
+}
+.week-card:nth-child(5)::before { 
+    background: linear-gradient(90deg, transparent 0%, rgba(6, 182, 212, 0.6) 50%, transparent 100%);
+}
+.week-card:nth-child(6)::before { 
+    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.6) 50%, transparent 100%);
+}
+
+@keyframes sketch-indicator {
+    0%, 100% { transform: scaleX(0.7); opacity: 0.4; }
+    50% { transform: scaleX(1); opacity: 0.8; }
+}
+
+.week-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+        0 16px 48px rgba(0, 0, 0, 0.2),
+        0 0 30px rgba(0, 0, 0, 0.1);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.week-card.completed {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.95) 0%, rgba(236, 253, 245, 0.9) 100%);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.week-card.completed::before {
+    background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.6) 50%, transparent 100%);
+}
+
+.week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.week-card.completed .week-header {
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.8) 0%, rgba(236, 253, 245, 0.6) 100%);
+}
+
+.week-info .week-number {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.25rem;
+}
+
+.week-number i {
+    color: #3b82f6;
+    filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
+}
+
+.week-card.completed .week-number i {
+    color: #10b981;
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.4));
+}
+
+.week-progress-mini {
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.week-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.ai-tutor-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 
+        0 4px 12px rgba(139, 92, 246, 0.4),
+        0 0 15px rgba(139, 92, 246, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.ai-tutor-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(139, 92, 246, 0.6),
+        0 0 25px rgba(139, 92, 246, 0.3);
+}
+
+.expand-btn {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+    border: 1.5px solid rgba(59, 130, 246, 0.3);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 2px 8px rgba(59, 130, 246, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s ease;
+}
+
+.expand-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 4px 16px rgba(59, 130, 246, 0.2),
+        0 0 15px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.expand-btn i {
+    transition: transform 0.3s ease;
+}
+
+.week-progress-bar {
+    height: 6px;
+    background: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(30, 31, 31, 0.6)),
+        repeating-linear-gradient(
+            -45deg,
+            rgba(255, 255, 255, 0.05) 0px,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+    background-blend-mode: overlay;
+    position: relative;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+
+.week-progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    transition: width 0.6s ease;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.week-card.completed .week-progress-fill {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+.week-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.week-content.expanded {
+    max-height: 5000px;
+}
+
+/* Content Sections */
+.objectives-section,
+.tasks-section,
+.assessment-section {
+    padding: 2rem;
+    border-bottom: 1px solid rgba(241, 245, 249, 0.8);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(248, 250, 252, 0.4) 100%);
+    backdrop-filter: blur(5px);
+}
+
+.assessment-section {
+    border-bottom: none;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+}
+
+.section-title i {
+    color: #3b82f6;
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+}
+
+.objectives-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.objective-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+    border-radius: 10px;
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 2px 8px rgba(59, 130, 246, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    transition: all 0.3s ease;
+}
+
+.objective-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 4px 16px rgba(59, 130, 246, 0.15),
+        0 0 15px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.objective-item i {
+    color: #3b82f6;
+    font-size: 1rem;
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
+}
+
+.objective-item span {
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Daily Timeline */
+.daily-timeline {
+    position: relative;
+}
+
+.day-item {
+    display: flex;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.day-item:last-child .day-line {
+    display: none;
+}
+
+.day-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 1.5rem;
+}
+
+.day-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(226, 232, 240, 0.9) 0%, rgba(203, 213, 225, 0.8) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+
+.day-item.completed .day-circle {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 
+        0 4px 12px rgba(16, 185, 129, 0.4),
+        0 0 15px rgba(16, 185, 129, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+}
+
+.day-line {
+    width: 3px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(226, 232, 240, 0.8) 0%, rgba(203, 213, 225, 0.6) 100%);
+    flex-grow: 1;
+    border-radius: 2px;
+}
+
+.day-content {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 4px 16px rgba(59, 130, 246, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    transition: all 0.3s ease;
+}
+
+.day-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.15),
+        0 0 20px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.day-item.completed .day-content {
+    border-color: rgba(167, 243, 208, 0.6);
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.9) 0%, rgba(236, 253, 245, 0.8) 100%);
+    box-shadow: 
+        0 4px 16px rgba(16, 185, 129, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+
+.day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.day-info h5 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 0.5rem 0;
+}
+
+.duration-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, rgba(219, 234, 254, 0.9) 0%, rgba(191, 219, 254, 0.8) 100%);
+    color: #1d4ed8;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    backdrop-filter: blur(5px);
+    box-shadow: 
+        0 2px 8px rgba(59, 130, 246, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+/* Custom Toggle Switch */
+.completion-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ADD these NEW CSS classes to your existing style section */
+
+/* New Assessment Feature Styles */
+.assessment-section-new {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.assessment-divider-new {
+    text-align: center;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.assessment-divider-new::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+}
+
+.assessment-divider-new span {
+    background: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    position: relative;
+}
+
+.assessment-btn-new {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.assessment-content-new {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.assessment-content-new i {
+    font-size: 1.25rem;
+    color: #64748b;
+}
+
+.assessment-text {
+    flex: 1;
+    font-weight: 600;
+    color: #374151;
+}
+
+.assessment-status span {
+    display: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Button States */
+.assessment-btn-new.locked {
+    border-color: #dc3545;
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    cursor: not-allowed;
+}
+
+.assessment-btn-new.locked .status-locked {
+    display: inline;
+    color: #dc3545;
+}
+
+.assessment-btn-new.unlocked {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    cursor: pointer;
+}
+
+.assessment-btn-new.unlocked:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.assessment-btn-new.unlocked .status-unlocked {
+    display: inline;
+    color: #28a745;
+}
+
+.assessment-btn-new.completed {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+}
+
+.assessment-btn-new.completed .status-completed {
+    display: inline;
+    color: #856404;
+}
+
+.task-checkbox {
+    display: none;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-slider {
+    width: 48px;
+    height: 24px;
+    background: linear-gradient(135deg, rgba(203, 213, 225, 0.8) 0%, rgba(148, 163, 184, 0.6) 100%);
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    box-shadow: 
+        0 2px 6px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    top: 1px;
+    left: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+}
+
+.task-checkbox:checked + .toggle-label .toggle-slider {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 
+        0 2px 6px rgba(16, 185, 129, 0.3),
+        0 0 15px rgba(16, 185, 129, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+}
+
+.task-checkbox:checked + .toggle-label .toggle-slider::before {
+    transform: translateX(24px);
+}
+
+.toggle-text {
+    font-weight: 500;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.task-checkbox:checked + .toggle-label .toggle-text {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+}
+
+/* Day Tasks */
+.day-tasks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .day-tasks {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+.tasks-list,
+.resources-list {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+
+.tasks-list h6,
+.resources-list h6 {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.task-item,
+.resource-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    backdrop-filter: blur(5px);
+    box-shadow: 
+        0 2px 6px rgba(59, 130, 246, 0.05),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s ease;
+}
+
+.task-item:hover,
+.resource-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+        0 4px 12px rgba(59, 130, 246, 0.1),
+        0 0 10px rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.25);
+}
+
+.task-item:last-child,
+.resource-item:last-child {
+    margin-bottom: 0;
+}
+
+.task-item i {
+    color: #3b82f6;
+    margin-top: 0.125rem;
+    font-size: 0.875rem;
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.3));
+}
+
+.resource-item i {
+    color: #059669;
+    margin-top: 0.125rem;
+    font-size: 0.875rem;
+    filter: drop-shadow(0 0 3px rgba(5, 150, 105, 0.3));
+}
+
+.task-item span,
+.resource-item span {
+    color: #374151;
+    line-height: 1.5;
+    font-size: 0.875rem;
+}
+
+/* Assessment Section */
+.assessment-card {
+    display: flex;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(254, 243, 199, 0.9) 0%, rgba(253, 230, 138, 0.8) 100%);
+    border-radius: 12px;
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 16px rgba(245, 158, 11, 0.2),
+        0 0 20px rgba(245, 158, 11, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+}
+
+.assessment-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: 
+        0 4px 12px rgba(245, 158, 11, 0.4),
+        0 0 15px rgba(245, 158, 11, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.assessment-content {
+    flex: 1;
+}
+
+.assessment-content p {
+    color: #92400e;
+    font-weight: 500;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    box-shadow: 
+        0 8px 24px rgba(59, 130, 246, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 1000;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    border-left: 4px solid #3b82f6;
+}
+
+.notification.success {
+    border-left-color: #10b981;
+    box-shadow: 
+        0 8px 24px rgba(16, 185, 129, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+
+.notification.success i {
+    color: #10b981;
+    filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.3));
+}
+
+.notification.error {
+    border-left-color: #ef4444;
+    box-shadow: 
+        0 8px 24px rgba(239, 68, 68, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+
+.notification.error i {
+    color: #ef4444;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3));
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification i {
+    font-size: 1.25rem;
+}
+
+.notification span {
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Additional Glow Effects */
+.week-card:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+    border-radius: 20px;
+    z-index: -1;
+    animation: glow-expand 0.3s ease-out;
+}
+
+@keyframes glow-expand {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .learning-container {
+        padding: 1rem;
+    }
+    
+    .header-section {
+        padding: 1.5rem;
+    }
+    
+    .phase-title {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .week-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .week-actions {
+        justify-content: space-between;
+    }
+    
+    .ai-tutor-btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .day-item {
+        flex-direction: column;
+    }
+    
+    .day-marker {
+        flex-direction: row;
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .day-line {
+        width: 60px;
+        height: 3px;
+        margin-left: 0.5rem;
+    }
+    
+    .day-item:last-child .day-line {
+        display: block;
+    }
+    
+    .day-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .completion-toggle {
+        justify-content: center;
+    }
+}
+
+/* Loading States */
+.task-checkbox:disabled + .toggle-label {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.task-checkbox:disabled + .toggle-label .toggle-slider {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+}
+
+/* Enhanced Hover Animations */
+.stat-card:hover .stat-icon {
+    animation: icon-bounce 0.6s ease;
+}
+
+@keyframes icon-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.skill-tag:hover {
+    animation: tag-wiggle 0.5s ease;
+}
+
+@keyframes tag-wiggle {
+    0%, 100% { transform: translateY(-2px) rotate(0deg); }
+    25% { transform: translateY(-2px) rotate(1deg); }
+    75% { transform: translateY(-2px) rotate(-1deg); }
+}
+
+/* Smooth Animations */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(241, 245, 249, 0.5);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6) 0%, rgba(29, 78, 216, 0.4) 100%);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(29, 78, 216, 0.6) 100%);
+}
+</style>
+{% endblock %}

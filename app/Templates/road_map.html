@@ -1,0 +1,1883 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Career Development Roadmap - (PBSC-Ignite)
+{% endblock %}
+
+{% block content %}
+
+
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/road_map.css') }}">
+
+
+<!-- Animated Background -->
+<div class="animated-background"></div>
+
+<!-- Floating Particles -->
+<div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-badge animate-on-scroll">
+            <i class="fas fa-rocket"></i>
+            <span>Your Learning Journey Awaits</span>
+        </div>
+        
+        <h1 class="hero-title animate-on-scroll">
+            Career Development<br>
+            <span style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Roadmap</span>
+        </h1>
+        
+        <p class="hero-subtitle animate-on-scroll">
+            Hey <span class="user-name">{{ user.name }}</span>, buckle up! 🚀 Here comes your epic roadmap to success!
+        </p>
+        
+        <!-- Dynamic Stats Dashboard -->
+        <div class="stats-dashboard">
+            <div class="stat-card animate-on-scroll">
+                <div class="stat-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <div class="stat-number">{{ roadmap_data.phases|length }}</div>
+                <div class="stat-label">Learning Phases</div>
+            </div>
+            
+            <div class="stat-card animate-on-scroll">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-number">
+                    {% set total_completed = 0 %}
+                    {% for phase in roadmap_data.phases %}
+                        {% set total_days = 0 %}
+                        {% set completed_days = 0 %}
+                        {% if phase.get('learning_plan') %}
+                            {% for week in phase.learning_plan.weekly_schedule %}
+                                {% for task in week.daily_tasks %}
+                                    {% set total_days = total_days + 1 %}
+                                    {% if task.completed %}
+                                        {% set completed_days = completed_days + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if total_days > 0 and completed_days == total_days %}
+                            {% set total_completed = total_completed + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {{ total_completed }}
+                </div>
+                <div class="stat-label">Completed</div>
+            </div>
+            
+            <div class="stat-card animate-on-scroll">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-number">
+                    {% set total_progress = 0 %}
+                    {% for phase in roadmap_data.phases %}
+                        {% set total_days = 0 %}
+                        {% set completed_days = 0 %}
+                        {% if phase.get('learning_plan') %}
+                            {% for week in phase.learning_plan.weekly_schedule %}
+                                {% for task in week.daily_tasks %}
+                                    {% set total_days = total_days + 1 %}
+                                    {% if task.completed %}
+                                        {% set completed_days = completed_days + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                        {% set progress = (completed_days / total_days * 100)|round if total_days > 0 else 0 %}
+                        {% set total_progress = total_progress + progress %}
+                    {% endfor %}
+                    {{ (total_progress / roadmap_data.phases|length)|round }}%
+                </div>
+                <div class="stat-label">Overall Progress</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="adaptive-dashboard" id="adaptiveDashboard">
+    <!-- Progress Analysis Section -->
+    <div class="analysis-section">
+        <div class="section-header">
+            <h3>🧠 Smart Learning Analysis</h3>
+            <button onclick="triggerAdaptiveAnalysis()" class="btn-analyze">
+                <i class="fas fa-chart-line"></i>
+                Analyze Progress
+            </button>
+        </div>
+        
+        <!-- Learning Velocity Indicator -->
+        <div class="velocity-indicator" id="velocityIndicator">
+            <div class="velocity-content">
+                <div class="velocity-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="velocity-info">
+                    <h4>Learning Velocity</h4>
+                    <span class="velocity-status" id="velocityStatus">Analyzing...</span>
+                    <p class="velocity-description" id="velocityDescription">We're analyzing your learning pace...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delay Alert System -->
+        <div class="delay-alerts" id="delayAlerts" style="display: none;">
+            <div class="alert-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h4>Learning Delays Detected</h4>
+            </div>
+            <div class="alert-content" id="delayContent">
+                <!-- Dynamic delay information -->
+            </div>
+        </div>
+        
+        <!-- Recommendations Panel -->
+        <div class="recommendations-panel" id="recommendationsPanel" style="display: none;">
+            <h4>📋 Personalized Recommendations</h4>
+            <div class="recommendations-list" id="recommendationsList">
+                <!-- Dynamic recommendations -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Adaptation History -->
+    <div class="adaptation-history" id="adaptationHistory" style="display: none;">
+        <h4>🔄 Recent Adaptations</h4>
+        <div class="adaptations-timeline" id="adaptationsTimeline">
+            <!-- Dynamic adaptation history -->
+        </div>
+    </div>
+</div>
+
+<!-- Catch-Up Plan Modal -->
+<div class="catch-up-modal" id="catchUpModal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>🚀 Personalized Catch-Up Plan</h3>
+            <button onclick="closeCatchUpModal()" class="modal-close">×</button>
+        </div>
+        <div class="modal-body" id="catchUpContent">
+            <!-- Dynamic catch-up plan -->
+        </div>
+        <div class="modal-footer">
+            <button onclick="acceptCatchUpPlan()" class="btn-accept">Accept Plan</button>
+            <button onclick="closeCatchUpModal()" class="btn-cancel">Maybe Later</button>
+        </div>
+    </div>
+</div>
+
+<!-- Revolutionary Timeline Section -->
+<section class="roadmap-container">
+    <div class="timeline-wrapper">
+        <!-- Animated Central Path -->
+        <div class="timeline-path"></div>
+        
+        <div class="phase-timeline">
+            {% for phase in roadmap_data.phases %}
+                {% set total_days = namespace(value=0) %}
+                {% set completed_days = namespace(value=0) %}
+                
+                {% if phase.get('learning_plan') %}
+                    {% for week in phase.learning_plan.weekly_schedule %}
+                        {% for task in week.daily_tasks %}
+                            {% set total_days.value = total_days.value + 1 %}
+                            {% if task.completed %}
+                                {% set completed_days.value = completed_days.value + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+
+                {% set progress = (completed_days.value / total_days.value * 100)|round if total_days.value > 0 else 0 %}
+                {% set phase_status = 'completed' if progress == 100 else ('in-progress' if progress > 0 else 'pending') %}
+
+                <div class="phase-item {{ phase_status }}" style="animation-delay: {{ loop.index * 0.3 }}s;">
+                    <div class="timeline-node">
+                        <div class="node-outer">
+                            <div class="node-inner">
+                                {% if progress == 100 %}
+                                    <i class="fas fa-check"></i>
+                                {% elif progress > 0 %}
+                                    <i class="fas fa-play"></i>
+                                {% else %}
+                                    <i class="fas fa-rocket"></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <div class="progress-header">
+                            <div class="progress-info">
+                                <div class="progress-badge {{ phase_status }}">
+                                    {% if progress == 100 %}
+                                        <i class="fas fa-medal"></i>
+                                        <span>Completed</span>
+                                    {% elif progress > 0 %}
+                                        <i class="fas fa-play-circle"></i>
+                                        <span>{{ progress }}% Complete</span>
+                                    {% else %}
+                                        <i class="fas fa-rocket"></i>
+                                        <span>Ready to Start</span>
+                                    {% endif %}
+                                </div>
+                                <div class="phase-number">Phase {{ loop.index }}</div>
+                            </div>
+                            <div class="liquid-progress">
+                                <div class="liquid-fill" style="width: {{ progress }}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <h2 class="phase-title">{{ phase.name }}</h2>
+                            <div class="phase-meta">
+                                <div class="duration-badge">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ phase.duration }}</span>
+                                </div>
+                            </div>
+                            
+                            <p class="phase-description">{{ phase.description }}</p>
+                            
+                            <div class="skills-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-lightbulb"></i>
+                                    {% if progress == 100 %}Skills Mastered{% elif progress > 0 %}Skills in Progress{% else %}Skills to Learn{% endif %}
+                                </h3>
+                                <div class="skills-grid">
+                                    {% for skill in phase.skills %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <div class="resources-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-book-open"></i>
+                                    Learning Resources
+                                </h3>
+                                <div class="resources-grid">
+                                    {% for category, items in phase.resources.items() %}
+                                        <div class="resource-card">
+                                            <div class="resource-header">
+                                                <div class="resource-icon">
+                                                    {% if category == 'Videos' or 'Course' in category %}
+                                                        <i class="fas fa-play"></i>
+                                                    {% elif category == 'Books' %}
+                                                        <i class="fas fa-book"></i>
+                                                    {% elif category == 'Practice' or 'Project' in category %}
+                                                        <i class="fas fa-code"></i>
+                                                    {% elif category == 'Tools' %}
+                                                        <i class="fas fa-wrench"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-link"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <div class="resource-title">{{ category }}</div>
+                                                    <div class="resource-count">{{ items|length }} resources</div>
+                                                </div>
+                                            </div>
+                                            <ul class="resource-list">
+                                                {% for item in items[:3] %}
+                                                    <li class="resource-item">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                        <span>{{ item }}</span>
+                                                    </li>
+                                                {% endfor %}
+                                                {% if items|length > 3 %}
+                                                    <li class="resource-item" style="color: #667eea; font-weight: 600;">
+                                                        <i class="fas fa-plus"></i>
+                                                        <span>{{ items|length - 3 }} more resources</span>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            {% if progress < 100 %}
+                                <button class="action-button" onclick="startModule('{{ loop.index0 }}')">
+                                    <i class="fas fa-{{ 'play' if progress > 0 else 'rocket' }}"></i>
+                                    <span>{% if total_days.value > 0 %}Continue Learning{% else %}Start Phase{% endif %}</span>
+                                </button>
+                            {% else %}
+                                <button class="action-button completed-button">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Phase Completed</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Motivational Footer -->
+<section class="motivation-section">
+    <div class="motivation-content">
+        <h2 class="motivation-title">Keep Learning, {{ user.name }}!</h2>
+        <p class="motivation-text">
+            Consistency and dedication are the keys to mastering any skill. You're on the right path to achieving greatness!
+        </p>
+        <div class="achievement-preview">
+            <div class="achievement-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <span>Next milestone at 85% completion</span>
+        </div>
+    </div>
+</section>
+
+<style>
+/* ✅ ADAPTIVE ROADMAP STYLES */
+
+.adaptive-dashboard {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+    color: #1e293b;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.btn-analyze {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.btn-analyze:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+}
+
+/* Velocity Indicator */
+.velocity-indicator {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.03) 100%);
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.velocity-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.velocity-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.velocity-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.velocity-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.velocity-status.fast {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.velocity-status.normal {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.velocity-status.slow {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.velocity-description {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+/* Delay Alerts */
+.delay-alerts {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.03) 100%);
+    border: 2px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.alert-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.alert-header i {
+    color: #ef4444;
+    font-size: 1.25rem;
+}
+
+.alert-header h4 {
+    color: #dc2626;
+    margin: 0;
+    font-weight: 600;
+}
+
+.delay-item {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #ef4444;
+}
+
+.delay-item:last-child {
+    margin-bottom: 0;
+}
+
+.delay-phase {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.delay-details {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+/* Recommendations Panel */
+.recommendations-panel {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(124, 58, 237, 0.03) 100%);
+    border: 2px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.recommendations-panel h4 {
+    color: #7c3aed;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.recommendation-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #8b5cf6;
+    transition: all 0.3s ease;
+}
+
+.recommendation-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+}
+
+.recommendation-item:last-child {
+    margin-bottom: 0;
+}
+
+.recommendation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-title {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+.recommendation-type {
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.recommendation-type.motivation {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.recommendation-type.gentle_reminder {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.recommendation-type.intensive_catchup {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.recommendation-type.curriculum_adjustment {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.recommendation-description {
+    color: #64748b;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.recommendation-action {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: #7c3aed;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Catch-Up Modal */
+.catch-up-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 0;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 2rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-accept {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-accept:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+/* Adaptation History */
+.adaptation-history {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border: 2px solid rgba(226, 232, 240, 0.5);
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.adaptation-history h4 {
+    color: #1e293b;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.adaptation-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #3b82f6;
+}
+
+.adaptation-item:last-child {
+    margin-bottom: 0;
+}
+
+.adaptation-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.adaptation-details {
+    flex: 1;
+}
+
+.adaptation-title {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.adaptation-description {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.adaptation-timestamp {
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+
+/* Progress Visualization */
+.progress-visualization {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(29, 78, 216, 0.03) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.progress-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.chart-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+}
+
+.chart-value {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.chart-label {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .adaptive-dashboard {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .velocity-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .progress-chart {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Loading States */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 50%;
+    border-top-color: #3b82f6;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success States */
+.success-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #10b981;
+    font-weight: 600;
+}
+
+.success-indicator i {
+    animation: bounce 0.6s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+</style>
+
+<script>
+// ✅ ADAPTIVE ROADMAP JAVASCRIPT
+
+let adaptiveAnalysisData = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧠 Adaptive Roadmap System initialized');
+    
+    // Auto-trigger analysis on page load
+    setTimeout(() => {
+        triggerAdaptiveAnalysis();
+    }, 2000);
+});
+
+async function triggerAdaptiveAnalysis() {
+    console.log('🔍 Triggering adaptive roadmap analysis...');
+    
+    const analyzeBtn = document.querySelector('.btn-analyze');
+    const originalText = analyzeBtn.innerHTML;
+    
+    // Show loading state
+    analyzeBtn.innerHTML = '<span class="loading-spinner"></span> Analyzing...';
+    analyzeBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/roadmap/analyze-and-adapt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            console.log('✅ Adaptive analysis completed:', data);
+            adaptiveAnalysisData = data;
+            displayAnalysisResults(data);
+        } else {
+            console.error('❌ Analysis failed:', data.error);
+            showAnalysisError(data.error);
+        }
+        
+    } catch (error) {
+        console.error('❌ Analysis request failed:', error);
+        showAnalysisError('Network error occurred');
+    } finally {
+        // Restore button
+        analyzeBtn.innerHTML = originalText;
+        analyzeBtn.disabled = false;
+    }
+}
+
+function displayAnalysisResults(data) {
+    const progressAnalysis = data.progress_analysis;
+    const delayAnalysis = data.delay_analysis;
+    const adaptations = data.adaptations_applied;
+    
+    // Update velocity indicator
+    updateVelocityIndicator(progressAnalysis.learning_velocity);
+    
+    // Show delay alerts if needed
+    if (delayAnalysis.total_days_behind > 0) {
+        showDelayAlerts(delayAnalysis);
+    }
+    
+    // Display recommendations
+    if (delayAnalysis.recommendations && delayAnalysis.recommendations.length > 0) {
+        showRecommendations(delayAnalysis.recommendations);
+    }
+    
+    // Show adaptation history
+    if (adaptations && Object.keys(adaptations).length > 0) {
+        showAdaptationHistory(adaptations);
+    }
+    
+    // Show progress visualization
+    showProgressVisualization(progressAnalysis);
+    
+    // Check if catch-up plan is needed
+    if (delayAnalysis.risk_level === 'high' || delayAnalysis.risk_level === 'critical') {
+        setTimeout(() => {
+            showCatchUpModal(delayAnalysis);
+        }, 2000);
+    }
+}
+
+function updateVelocityIndicator(velocity) {
+    const statusElement = document.getElementById('velocityStatus');
+    const descElement = document.getElementById('velocityDescription');
+    const indicatorElement = document.getElementById('velocityIndicator');
+    
+    // Remove existing velocity classes
+    statusElement.classList.remove('fast', 'normal', 'slow');
+    statusElement.classList.add(velocity);
+    
+    const velocityData = {
+        fast: {
+            text: 'Fast Learner! 🚀',
+            description: 'You\'re progressing faster than expected. Consider taking on additional challenges!',
+            color: 'rgba(16, 185, 129, 0.05)'
+        },
+        normal: {
+            text: 'On Track 📈',
+            description: 'You\'re maintaining a steady learning pace. Keep up the great work!',
+            color: 'rgba(59, 130, 246, 0.05)'
+        },
+        slow: {
+            text: 'Needs Attention ⚠️',
+            description: 'Your learning pace has slowed down. Let\'s create a plan to get back on track.',
+            color: 'rgba(245, 158, 11, 0.05)'
+        }
+    };
+    
+    const velocityInfo = velocityData[velocity] || velocityData.normal;
+    
+    statusElement.textContent = velocityInfo.text;
+    descElement.textContent = velocityInfo.description;
+    indicatorElement.style.background = `linear-gradient(135deg, ${velocityInfo.color} 0%, ${velocityInfo.color} 100%)`;
+}
+
+function showDelayAlerts(delayAnalysis) {
+    const alertsContainer = document.getElementById('delayAlerts');
+    const contentContainer = document.getElementById('delayContent');
+    
+    let delayHTML = `
+        <div class="delay-summary">
+            <p><strong>You're ${delayAnalysis.total_days_behind} days behind schedule</strong></p>
+            <p>Risk Level: <span class="risk-level ${delayAnalysis.risk_level}">${delayAnalysis.risk_level.toUpperCase()}</span></p>
+        </div>
+    `;
+    
+    if (delayAnalysis.phases_behind_schedule.length > 0) {
+        delayHTML += '<div class="phases-behind">';
+        delayAnalysis.phases_behind_schedule.forEach(phase => {
+            delayHTML += `
+                <div class="delay-item">
+                    <div class="delay-phase">${phase.phase_name}</div>
+                    <div class="delay-details">
+                        ${phase.days_behind} days behind • Expected: ${phase.expected_by_now}, Completed: ${phase.actually_completed}
+                    </div>
+                </div>
+            `;
+        });
+        delayHTML += '</div>';
+    }
+    
+    contentContainer.innerHTML = delayHTML;
+    alertsContainer.style.display = 'block';
+    
+    // Animate in
+    setTimeout(() => {
+        alertsContainer.style.opacity = '1';
+        alertsContainer.style.transform = 'translateY(0)';
+    }, 100);
+}
+
+function showRecommendations(recommendations) {
+    const panelContainer = document.getElementById('recommendationsPanel');
+    const listContainer = document.getElementById('recommendationsList');
+    
+    let recommendationsHTML = '';
+    
+    recommendations.forEach(rec => {
+        recommendationsHTML += `
+            <div class="recommendation-item">
+                <div class="recommendation-header">
+                    <span class="recommendation-title">${rec.title}</span>
+                    <span class="recommendation-type ${rec.type}">${rec.type.replace('_', ' ')}</span>
+                </div>
+                <div class="recommendation-description">${rec.description}</div>
+                <div class="recommendation-action">
+                    <strong>Action:</strong> ${rec.action}
+                </div>
+            </div>
+        `;
+    });
+    
+    listContainer.innerHTML = recommendationsHTML;
+    panelContainer.style.display = 'block';
+}
+
+function showAdaptationHistory(adaptations) {
+    const historyContainer = document.getElementById('adaptationHistory');
+    const timelineContainer = document.getElementById('adaptationsTimeline');
+    
+    let historyHTML = '';
+    
+    // Schedule adjustments
+    if (adaptations.schedule_adjustments && adaptations.schedule_adjustments.length > 0) {
+        adaptations.schedule_adjustments.forEach(adj => {
+            historyHTML += `
+                <div class="adaptation-item">
+                    <div class="adaptation-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="adaptation-details">
+                        <div class="adaptation-title">Schedule Adjustment</div>
+                        <div class="adaptation-description">${adj.description}</div>
+                        <div class="adaptation-timestamp">Just applied</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Content modifications
+    if (adaptations.content_modifications && adaptations.content_modifications.length > 0) {
+        adaptations.content_modifications.forEach(mod => {
+            historyHTML += `
+                <div class="adaptation-item">
+                    <div class="adaptation-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="adaptation-details">
+                        <div class="adaptation-title">Content Modification</div>
+                        <div class="adaptation-description">${mod.description}</div>
+                        <div class="adaptation-timestamp">Just applied</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Catch-up plans
+    if (adaptations.catch_up_plans && adaptations.catch_up_plans.length > 0) {
+        adaptations.catch_up_plans.forEach(plan => {
+            historyHTML += `
+                <div class="adaptation-item">
+                    <div class="adaptation-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="adaptation-details">
+                        <div class="adaptation-title">Catch-Up Plan Created</div>
+                        <div class="adaptation-description">${plan.description}</div>
+                        <div class="adaptation-timestamp">${plan.estimated_hours} hours estimated</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    if (historyHTML) {
+        timelineContainer.innerHTML = historyHTML;
+        historyContainer.style.display = 'block';
+    }
+}
+
+function showProgressVisualization(progressAnalysis) {
+    // Check if visualization container exists
+    let vizContainer = document.getElementById('progressVisualization');
+    if (!vizContainer) {
+        // Create visualization container
+        vizContainer = document.createElement('div');
+        vizContainer.id = 'progressVisualization';
+        vizContainer.className = 'progress-visualization';
+        document.getElementById('adaptiveDashboard').appendChild(vizContainer);
+    }
+    
+    const overall = progressAnalysis.overall_stats;
+    const expectedVsActual = progressAnalysis.expected_vs_actual;
+    
+    vizContainer.innerHTML = `
+        <h4>📊 Progress Overview</h4>
+        <div class="progress-chart">
+            <div class="chart-item">
+                <div class="chart-value">${overall.completed_phases}</div>
+                <div class="chart-label">Completed Phases</div>
+            </div>
+            <div class="chart-item">
+                <div class="chart-value">${overall.in_progress_phases}</div>
+                <div class="chart-label">In Progress</div>
+            </div>
+            <div class="chart-item">
+                <div class="chart-value">${progressAnalysis.daily_completion_rate.toFixed(1)}%</div>
+                <div class="chart-label">Completion Rate</div>
+            </div>
+            <div class="chart-item">
+                <div class="chart-value">${expectedVsActual.ahead_behind >= 0 ? '+' : ''}${expectedVsActual.ahead_behind}</div>
+                <div class="chart-label">Days ${expectedVsActual.ahead_behind >= 0 ? 'Ahead' : 'Behind'}</div>
+            </div>
+        </div>
+    `;
+}
+
+function showCatchUpModal(delayAnalysis) {
+    const modal = document.getElementById('catchUpModal');
+    const content = document.getElementById('catchUpContent');
+    
+    const catchUpHTML = `
+        <div class="catch-up-plan">
+            <div class="plan-header">
+                <h4>🎯 Your Personalized Catch-Up Strategy</h4>
+                <p>You're ${delayAnalysis.total_days_behind} days behind schedule. Here's how we can get you back on track:</p>
+            </div>
+            
+            <div class="plan-details">
+                <div class="plan-item">
+                    <h5>📅 Time Commitment</h5>
+                    <p>Dedicate an extra 1-2 hours daily for the next week</p>
+                </div>
+                
+                <div class="plan-item">
+                    <h5>🎯 Focus Areas</h5>
+                    <ul>
+                        <li>Complete missed daily tasks</li>
+                        <li>Focus on core concepts</li>
+                        <li>Skip optional advanced topics temporarily</li>
+                    </ul>
+                </div>
+                
+                <div class="plan-item">
+                    <h5>🏆 Success Metrics</h5>
+                    <p>Complete ${delayAnalysis.total_days_behind} overdue tasks to get back on schedule</p>
+                </div>
+            </div>
+            
+            <div class="plan-benefits">
+                <h5>✨ What You'll Gain</h5>
+                <ul>
+                    <li>Get back on your original timeline</li>
+                    <li>Boost confidence with quick wins</li>
+                    <li>Maintain learning momentum</li>
+                </ul>
+            </div>
+        </div>
+    `;
+    
+    content.innerHTML = catchUpHTML;
+    modal.style.display = 'flex';
+    
+    // Animate in
+    setTimeout(() => {
+        modal.querySelector('.modal-content').style.transform = 'translateY(0) scale(1)';
+        modal.querySelector('.modal-content').style.opacity = '1';
+    }, 100);
+}
+
+function closeCatchUpModal() {
+    const modal = document.getElementById('catchUpModal');
+    modal.style.display = 'none';
+}
+
+function acceptCatchUpPlan() {
+    console.log('✅ User accepted catch-up plan');
+    
+    // Show success message
+    showSuccessNotification('Catch-up plan activated! You\'ve got this! 🚀');
+    
+    // Close modal
+    closeCatchUpModal();
+    
+    // Trigger roadmap refresh to apply catch-up mode
+    setTimeout(() => {
+        location.reload();
+    }, 2000);
+}
+
+function showAnalysisError(error) {
+    const dashboard = document.getElementById('adaptiveDashboard');
+    
+    const errorHTML = `
+        <div class="analysis-error">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="error-content">
+                <h4>Analysis Temporarily Unavailable</h4>
+                <p>${error}</p>
+                <button onclick="triggerAdaptiveAnalysis()" class="btn-retry">
+                    <i class="fas fa-redo"></i>
+                    Try Again
+                </button>
+            </div>
+        </div>
+    `;
+    
+    dashboard.innerHTML = errorHTML;
+}
+
+function showSuccessNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <div class="success-indicator">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        color: 'white',
+        padding: '1rem 1.5rem',
+        borderRadius: '12px',
+        boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
+        zIndex: '10001',
+        transform: 'translateX(100%)',
+        transition: 'all 0.3s ease'
+    });
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Animate out
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
+}
+
+// Enhanced task completion with adaptive trigger
+function completeTaskWithAdaptive(taskData) {
+    return fetch('/complete-task', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success' && data.adaptive_analysis) {
+            console.log('🧠 Received adaptive analysis:', data.adaptive_analysis);
+            
+            // Update the dashboard with new analysis
+            displayAnalysisResults({
+                progress_analysis: data.adaptive_analysis.progress_analysis,
+                delay_analysis: data.adaptive_analysis.delay_analysis,
+                adaptations_applied: data.adaptive_analysis.adaptations_applied,
+                status: 'success'
+            });
+        }
+        
+        return data;
+    });
+}
+</script>
+
+<script>
+// Advanced Animation System for Flask Template
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Creative Roadmap Loading...');
+    
+    // Initialize scroll-triggered animations
+    initializeScrollAnimations();
+    
+    // Initialize timeline animations
+    initializeTimelineAnimations();
+    
+    // Initialize interactive elements
+    initializeInteractiveElements();
+    
+    // Initialize progress bars with real data
+    initializeProgressBars();
+    
+    console.log('✨ Creative Roadmap Loaded Successfully!');
+});
+
+// Scroll-triggered Animation System
+function initializeScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+                
+                // Add staggered delay for multiple elements
+                const index = Array.from(entry.target.parentNode.children).indexOf(entry.target);
+                entry.target.style.transitionDelay = `${index * 0.1}s`;
+                
+                scrollObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe all animated elements
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        scrollObserver.observe(el);
+    });
+}
+
+// Timeline Animations
+function initializeTimelineAnimations() {
+    // Animate timeline path
+    setTimeout(() => {
+        const timelinePath = document.querySelector('.timeline-path');
+        if (timelinePath) {
+            timelinePath.style.animationPlayState = 'running';
+        }
+    }, 1000);
+
+    // Phase reveal animations with staggered timing
+    const phaseItems = document.querySelectorAll('.phase-item');
+    phaseItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0) scale(1)';
+        }, 1000 + (index * 300));
+    });
+}
+
+// Interactive Elements
+function initializeInteractiveElements() {
+    // Timeline node interactions
+    document.querySelectorAll('.timeline-node').forEach(node => {
+        node.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.15) translateX(-50%)';
+            this.style.zIndex = '10';
+        });
+        
+        node.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) translateX(-50%)';
+            this.style.zIndex = '3';
+        });
+    });
+
+    // Phase card hover effects
+    document.querySelectorAll('.phase-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-15px)';
+            this.style.boxShadow = 'var(--shadow-lifted)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'var(--shadow-soft)';
+        });
+    });
+
+    // Skill tag interactions
+    document.querySelectorAll('.skill-tag').forEach(tag => {
+        tag.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px) scale(1.05)';
+        });
+        
+        tag.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+}
+
+// Progress Bar Animations
+function initializeProgressBars() {
+    const progressObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const progressBar = entry.target;
+                const targetWidth = progressBar.style.width;
+                
+                // Reset and animate
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = targetWidth;
+                }, 200);
+                
+                progressObserver.unobserve(progressBar);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.liquid-fill').forEach(bar => {
+        progressObserver.observe(bar);
+    });
+}
+
+// Flask Integration - Your Original Function
+function startModule(phaseId) {
+    const button = event.target.closest('.action-button');
+    const originalContent = button.innerHTML;
+    
+    // Loading animation
+    button.disabled = true;
+    button.style.opacity = '0.8';
+    
+    // Flask integration - Your original code
+    fetch(`/generate-plan/${phaseId}`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success' || data.status === 'exists') {
+            // Success animation
+            button.innerHTML = `
+                <i class="fas fa-check"></i>
+                <span>Success! Redirecting...</span>
+            `;
+            button.style.background = 'var(--success-gradient)';
+            
+            // Show success notification
+            showNotification('Learning plan generated successfully!', 'success');
+            
+            setTimeout(() => {
+                window.location.href = `/learning-plan/${phaseId}`;
+            }, 1000);
+        } else {
+            throw new Error(data.message || 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+        // Error animation
+        button.innerHTML = `
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Error! Try Again</span>
+        `;
+        button.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+        
+        showNotification('Error: ' + error.message, 'error');
+        
+        setTimeout(() => {
+            button.innerHTML = originalContent;
+            button.disabled = false;
+            button.style.opacity = '1';
+            button.style.background = 'var(--primary-gradient)';
+        }, 3000);
+    });
+}
+
+// Advanced Notification System
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    const colors = {
+        success: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        error: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+        info: 'var(--primary-gradient)'
+    };
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        background: ${colors[type]};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        z-index: 10000;
+        font-size: 0.9rem;
+        font-weight: 500;
+        box-shadow: var(--shadow-lifted);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: slideInRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        max-width: 400px;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 500);
+    }, 4000);
+}
+
+// Keyboard Navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        window.scrollTo({ 
+            top: 0, 
+            behavior: 'smooth' 
+        });
+    }
+    
+    // Arrow key navigation between phases
+    if (e.key === 'ArrowDown') {
+        const phases = document.querySelectorAll('.phase-item');
+        const currentIndex = Array.from(phases).findIndex(phase => phase.matches(':hover'));
+        if (currentIndex >= 0 && currentIndex < phases.length - 1) {
+            phases[currentIndex + 1].scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+    
+    if (e.key === 'ArrowUp') {
+        const phases = document.querySelectorAll('.phase-item');
+        const currentIndex = Array.from(phases).findIndex(phase => phase.matches(':hover'));
+        if (currentIndex > 0) {
+            phases[currentIndex - 1].scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+});
+
+// Performance Monitoring
+if ('performance' in window) {
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            if (perfData) {
+                const loadTime = Math.round(perfData.loadEventEnd - perfData.loadEventStart);
+                console.log(`🚀 Page loaded in ${loadTime}ms`);
+                
+                if (loadTime > 3000) {
+                    console.warn('⚠️ Page load time is slow. Consider optimization.');
+                }
+            }
+        }, 0);
+    });
+}
+
+// Add required animations to stylesheet
+const additionalStyles = document.createElement('style');
+additionalStyles.textContent = `
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Enhanced button ripple effect */
+    .action-button {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: scale(0);
+        animation: rippleEffect 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes rippleEffect {
+        to {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+    
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Loading state for buttons */
+    .action-button:disabled {
+        cursor: not-allowed;
+        transform: none !important;
+    }
+    
+    /* Enhanced hover effects for mobile */
+    @media (hover: none) {
+        .phase-card:active {
+            transform: translateY(-5px);
+        }
+        
+        .skill-tag:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .timeline-node:active .node-outer {
+            transform: scale(1.1);
+        }
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --text-light: #a0aec0;
+            --surface: #2d3748;
+            --background: #1a202c;
+            --border: #4a5568;
+        }
+        
+        .animated-background {
+            opacity: 0.05;
+        }
+        
+        .particle {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        
+        .timeline-path::before {
+            animation: none;
+        }
+        
+        .phase-item {
+            animation: none;
+            opacity: 1;
+            transform: none;
+        }
+    }
+    
+    /* Print styles */
+    @media print {
+        .animated-background,
+        .particles,
+        .hero-badge,
+        .timeline-node,
+        .action-button {
+            display: none;
+        }
+        
+        .phase-card {
+            break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid #000;
+        }
+        
+        .timeline-path {
+            display: none;
+        }
+        
+        .phase-item:nth-child(odd) .phase-card,
+        .phase-item:nth-child(even) .phase-card {
+            margin: 1rem 0;
+        }
+    }
+`;
+document.head.appendChild(additionalStyles);
+
+// Analytics tracking
+function trackInteraction(action, element) {
+    console.log(`📊 User interaction: ${action} on ${element}`);
+    // Replace with actual analytics service like Google Analytics
+    if (typeof gtag !== 'undefined') {
+        gtag('event', action, {
+            'event_category': 'roadmap',
+            'event_label': element
+        });
+    }
+}
+
+// Track all button clicks
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.action-button')) {
+        const phaseNumber = e.target.closest('.phase-item').querySelector('.phase-number').textContent;
+        trackInteraction('start_phase', phaseNumber);
+    }
+    
+    if (e.target.closest('.skill-tag')) {
+        const skillName = e.target.textContent;
+        trackInteraction('skill_hover', skillName);
+    }
+    
+    if (e.target.closest('.timeline-node')) {
+        const phaseNumber = e.target.closest('.phase-item').querySelector('.phase-number').textContent;
+        trackInteraction('node_click', phaseNumber);
+    }
+});
+
+// Track scroll progress
+let scrollProgress = 0;
+window.addEventListener('scroll', function() {
+    const scrollTop = window.pageYOffset;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const newProgress = Math.round((scrollTop / docHeight) * 100);
+    
+    if (newProgress !== scrollProgress && newProgress % 10 === 0) {
+        scrollProgress = newProgress;
+        trackInteraction('scroll_progress', `${scrollProgress}%`);
+    }
+});
+
+// Add ripple effect to buttons
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.action-button')) {
+        const button = e.target.closest('.action-button');
+        const ripple = document.createElement('div');
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        
+        ripple.classList.add('ripple');
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        
+        button.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+});
+
+// Intersection Observer for phase progress tracking
+const phaseObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const phaseNumber = entry.target.querySelector('.phase-number').textContent;
+            trackInteraction('phase_viewed', phaseNumber);
+        }
+    });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.phase-item').forEach(phase => {
+    phaseObserver.observe(phase);
+});
+
+// Add smooth scrolling for internal links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Initialize tooltips for skill tags
+document.querySelectorAll('.skill-tag').forEach(tag => {
+    tag.addEventListener('mouseenter', function() {
+        // You can add tooltip functionality here
+        this.setAttribute('title', `Click to learn more about ${this.textContent}`);
+    });
+});
+
+// Preload images for better performance
+function preloadImages() {
+    const imageUrls = [
+        // Add any background images or icons that need preloading
+    ];
+    
+    imageUrls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+    });
+}
+
+// Initialize preloading
+preloadImages();
+
+console.log('🎉 Advanced Animated Roadmap fully loaded with Flask integration!');
+</script>
+
+{% endblock %}

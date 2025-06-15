@@ -1,0 +1,1097 @@
+{% extends 'base.html' %}
+
+{% block title %}
+AI Tutor - {{ topic }}
+{% endblock %}
+
+{% block content %}
+
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/tutor.css') }}">
+<div class="container-fluid my-3">
+    
+    <!-- Main Content Area -->
+<div class="row">
+    <!-- Chat Area (now on the left) -->
+    <div class="col-md-9">
+        <div class="chat-card">
+            <div class="chat-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-robot"></i> AI Tutor - {{ topic }}
+                </h5>
+                <button type="button" id="expandBtn" class="btn btn-outline-light btn-sm">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+            
+            <div class="chat-body">
+                <div id="chatContainer" class="chat-container">
+                    {% if chat_history|length > 0 %}
+                        {% for message in chat_history %}
+                            <div class="message-wrapper {{ 'user' if message.role == 'user' else 'assistant' }}">
+                                <div class="message-bubble">
+                                    <div class="message-content" data-formatted="false">
+                                        {{ message.content|safe }}
+                                    </div>
+                                    <div class="message-time">
+                                        {{ message.timestamp.strftime('%Y-%m-%d %H:%M') if message.timestamp else '' }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="message-wrapper assistant">
+                            <div class="message-bubble">
+                                <div class="message-content">
+                                    <p>👋 Hi there! I'm your AI tutor for <strong>{{ topic }}</strong>.</p>
+                                    <p>I'm here to help you understand concepts, answer questions, and guide you through this learning module. Feel free to ask me about:</p>
+                                    <ul>
+                                        {% for objective in module.learning_objectives %}
+                                            <li>{{ objective }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <p>What would you like to learn about today?</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Typing indicator -->
+                <div id="typingIndicator" class="message-wrapper assistant d-none">
+                    <div class="message-bubble">
+                        <div class="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-footer">
+                <form id="chatForm" class="chat-input-form">
+                    <div class="input-group">
+                        <input type="text" id="messageInput" class="form-control" placeholder="Type your question here..." autocomplete="off">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Sidebar (previously left sidebar) -->
+    <div class="col-md-3">
+        <div class="module-info-card">
+            <div class="module-header">
+                <h6 class="mb-0">{{ phase.name }}</h6>
+                <span class="badge bg-primary">Week {{ module.week }}</span>
+            </div>
+            
+            <div class="module-content">
+                <div class="info-section">
+                    <h6 class="section-title">
+                        <i class="fas fa-bullseye"></i> Learning Objectives
+                    </h6>
+                    <ul class="objectives-list">
+                        {% for objective in module.learning_objectives %}
+                            <li>{{ objective }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h6 class="section-title">
+                        <i class="fas fa-tools"></i> Key Skills
+                    </h6>
+                    <div class="skills-tags">
+                        {% for skill in phase.skills %}
+                            <span class="skill-tag">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="module-actions">
+                    <button class="btn btn-outline-secondary btn-sm w-100 mb-2" id="btnClearChat">
+                        <i class="fas fa-trash-alt"></i> Clear Chat
+                    </button>
+                    <a href="{{ url_for('roadmap_bp.roadmap') }}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-arrow-left"></i> Back to Roadmap
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>      
+                    <!-- Typing indicator -->
+                    <div id="typingIndicator" class="message-wrapper assistant d-none">
+                        <div class="message-bubble">
+                            <div class="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+               
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Resources Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="resources-top-section mb-4">
+                <div class="resources-header d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book-open text-primary"></i> Learning Resources
+                    </h5>
+                    <button class="btn btn-sm btn-outline-primary" id="btnRefreshResources">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                
+                <div class="resources-container">
+                    <ul class="nav nav-pills mb-3" id="resourceTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="videos-tab" data-bs-toggle="tab" data-bs-target="#videos" type="button">
+                                <i class="fab fa-youtube"></i> Videos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="papers-tab" data-bs-toggle="tab" data-bs-target="#papers" type="button">
+                                <i class="fas fa-graduation-cap"></i> Papers
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="web-tab" data-bs-toggle="tab" data-bs-target="#web" type="button">
+                                <i class="fas fa-globe"></i> Web
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="resourceTabsContent">
+                        <div class="tab-pane fade show active" id="videos" role="tabpanel">
+                            <div class="resources-scroll-container">
+                                <div class="text-center py-3 d-none" id="videosLoading">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                <div id="videosList" class="d-flex gap-3"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="papers" role="tabpanel">
+                            <div class="resources-scroll-container">
+                                <div class="text-center py-3 d-none" id="papersLoading">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                <div id="papersList" class="d-flex gap-3"></div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="web" role="tabpanel">
+                            <div class="resources-scroll-container">
+                                <div class="text-center py-3 d-none" id="webLoading">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                <div id="webList" class="d-flex gap-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Citation Modal -->
+<div class="modal fade" id="citationModal" tabindex="-1" aria-labelledby="citationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="citationModalLabel">Source Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="citationContent">
+                <!-- Citation details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('messageInput');
+    const chatForm = document.getElementById('chatForm');
+    const chatContainer = document.getElementById('chatContainer');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const btnClearChat = document.getElementById('btnClearChat');
+    const btnRefreshResources = document.getElementById('btnRefreshResources');
+    
+    const phaseId = '{{ phase_id }}';
+    const moduleId = '{{ module_id }}';
+    const topic = '{{ topic }}';
+    
+    // State management
+    let citationSources = {};
+    let isFullscreen = false;
+    let modalIsOpen = false;
+    
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    scrollToBottom();
+    loadResources();
+    
+    // Format message with citations
+    function formatMessage(message) {
+        if (!message) return '';
+        
+        // Store code blocks temporarily to protect them from other formatting
+        const codeBlocks = [];
+        let codeIndex = 0;
+        
+        // Extract code blocks first
+        message = message.replace(/```(\w*)([\s\S]*?)```/g, function(match, language, code) {
+            const placeholder = `__CODE_BLOCK_${codeIndex}__`;
+            codeBlocks[codeIndex] = `<pre><code class="language-${language || 'plaintext'}">${escapeHtml(code.trim())}</code></pre>`;
+            codeIndex++;
+            return placeholder;
+        });
+        
+        // Extract inline code
+        message = message.replace(/`([^`]+)`/g, function(match, code) {
+            const placeholder = `__CODE_BLOCK_${codeIndex}__`;
+            codeBlocks[codeIndex] = `<code>${escapeHtml(code)}</code>`;
+            codeIndex++;
+            return placeholder;
+        });
+        
+        // Headers - must come before other formatting
+        message = message.replace(/^#{4}\s+(.*?)$/gm, '<h4>$1</h4>');
+        message = message.replace(/^#{3}\s+(.*?)$/gm, '<h3>$1</h3>');
+        message = message.replace(/^#{2}\s+(.*?)$/gm, '<h3>$1</h3>');
+        
+        // Bold text
+        message = message.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        
+        // Italic text (but not bullet points)
+        message = message.replace(/(?<!\n)\*([^*\n]+)\*/g, '<em>$1</em>');
+        
+        // Tables (simple markdown table support)
+        message = message.replace(/\|(.+)\|/g, function(match, content) {
+            if (match.includes('---|')) {
+                return match; // Skip table separators
+            }
+            const cells = content.split('|').map(cell => cell.trim());
+            return '<tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+        });
+        
+        // Wrap table rows in table
+        message = message.replace(/(<tr>.*?<\/tr>[\s\n]*)+/g, function(match) {
+            return '<table class="table table-sm table-bordered">' + match + '</table>';
+        });
+        
+        // Handle unordered lists
+        const listItems = [];
+        message = message.replace(/^[\*\-]\s+(.*)$/gm, function(match, item) {
+            listItems.push(`<li>${item}</li>`);
+            return `__LIST_ITEM_${listItems.length - 1}__`;
+        });
+        
+        // Group consecutive list items
+        message = message.replace(/(__LIST_ITEM_\d+__\s*)+/g, function(match) {
+            const items = match.match(/__LIST_ITEM_(\d+)__/g).map(item => {
+                const index = parseInt(item.match(/\d+/)[0]);
+                return listItems[index];
+            });
+            return '<ul>' + items.join('') + '</ul>';
+        });
+        
+        // Handle ordered lists
+        message = message.replace(/^\d+\.\s+(.*)$/gm, '<li>$1</li>');
+        message = message.replace(/(<li>.*?<\/li>\s*)+/g, function(match) {
+            if (!match.includes('__LIST_ITEM_')) {
+                return '<ol>' + match + '</ol>';
+            }
+            return match;
+        });
+        
+        // Handle citations with proper source extraction
+        message = message.replace(/\[(\d+)\]\s*\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, function(match, num, text, url) {
+            // Store citation source
+            citationSources[num] = {
+                title: text,
+                url: url,
+                snippet: ''
+            };
+            return `<a href="#" class="citation-link" data-citation="${num}">[${num}]</a>`;
+        });
+        
+        // Handle simple citations [1], [2], etc.
+        message = message.replace(/\[(\d+)\](?!\()/g, function(match, num) {
+            return `<a href="#" class="citation-link" data-citation="${num}">[${num}]</a>`;
+        });
+        
+        // Handle blockquotes
+        message = message.replace(/^>\s+(.*)$/gm, '<blockquote class="blockquote">$1</blockquote>');
+        
+        // Restore code blocks
+        codeBlocks.forEach((code, index) => {
+            message = message.replace(`__CODE_BLOCK_${index}__`, code);
+        });
+        
+        // Line breaks (but not in HTML tags)
+        message = message.split('\n').map(line => {
+            if (line.trim().startsWith('<') && line.trim().endsWith('>')) {
+                return line;
+            }
+            return line + (line.trim() ? '<br>' : '');
+        }).join('\n');
+        
+        // Clean up extra breaks
+        message = message.replace(/<br>\s*<ul>/g, '<ul>');
+        message = message.replace(/<\/ul>\s*<br>/g, '</ul>');
+        message = message.replace(/<br>\s*<ol>/g, '<ol>');
+        message = message.replace(/<\/ol>\s*<br>/g, '</ol>');
+        message = message.replace(/<br>\s*<h/g, '<h');
+        message = message.replace(/<\/h\d>\s*<br>/g, function(match) {
+            return match.replace('<br>', '');
+        });
+        
+        return message;
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Handle chat form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        addMessageToChat('user', message);
+        messageInput.value = '';
+        
+        typingIndicator.classList.remove('d-none');
+        scrollToBottom();
+        
+        fetch('/api/tutor/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                phase_id: phaseId,
+                module_id: moduleId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            typingIndicator.classList.add('d-none');
+            
+            if (data.status === 'success') {
+                // Parse citation sources from the response
+                const responseText = data.response;
+                const citationRegex = /\[(\d+)\]\s*\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
+                let match;
+                
+                while ((match = citationRegex.exec(responseText)) !== null) {
+                    citationSources[match[1]] = {
+                        title: match[2],
+                        url: match[3],
+                        snippet: ''
+                    };
+                }
+                
+                // Also check for sources in data
+                if (data.sources) {
+                    Object.assign(citationSources, data.sources);
+                }
+                
+                addMessageToChat('assistant', data.response);
+            } else {
+                addMessageToChat('assistant', 'Sorry, I encountered an error. Please try again.');
+                console.error('Error:', data.message);
+            }
+        })
+        .catch(error => {
+            typingIndicator.classList.add('d-none');
+            addMessageToChat('assistant', 'Sorry, I encountered an error. Please try again.');
+            console.error('Error:', error);
+        });
+    });
+    
+    // Add message to chat
+    function addMessageToChat(role, content) {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = `message-wrapper ${role}`;
+        
+        const messageBubble = document.createElement('div');
+        messageBubble.className = 'message-bubble';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.innerHTML = formatMessage(content);
+        
+        const messageTime = document.createElement('div');
+        messageTime.className = 'message-time';
+        const now = new Date();
+        messageTime.textContent = now.toLocaleString('en-US', { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit'
+        });
+        
+        messageBubble.appendChild(messageContent);
+        messageBubble.appendChild(messageTime);
+        messageWrapper.appendChild(messageBubble);
+        
+        chatContainer.appendChild(messageWrapper);
+        scrollToBottom();
+        
+        // Add citation click handlers
+        messageContent.querySelectorAll('.citation-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const citationNum = this.getAttribute('data-citation');
+                showCitationModal(citationNum);
+            });
+        });
+    }
+    
+    // Enhanced citation modal handling 
+    function showCitationModal(citationNum) {
+        modalIsOpen = true;
+        
+        const modalElement = document.getElementById('citationModal');
+        const modal = new bootstrap.Modal(modalElement, {
+            backdrop: isFullscreen ? 'static' : true,
+            keyboard: true,
+            focus: true
+        });
+        const content = document.getElementById('citationContent');
+        
+        // Extract source from the response if not already stored
+        if (!citationSources[citationNum]) {
+            const lastMessage = chatContainer.querySelector('.message-wrapper.assistant:last-child .message-content');
+            if (lastMessage) {
+                const text = lastMessage.textContent;
+                const regex = new RegExp(`\\[${citationNum}\\]\\s*\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\)]+)\\)`, 'g');
+                const match = regex.exec(text);
+                if (match) {
+                    citationSources[citationNum] = {
+                        title: match[1],
+                        url: match[2]
+                    };
+                }
+            }
+        }
+        
+        if (citationSources[citationNum]) {
+            const source = citationSources[citationNum];
+            content.innerHTML = `
+                <div class="citation-details">
+                    <h6 class="citation-title">Source [${citationNum}]</h6>
+                    <p class="citation-text">${source.title || 'Source Document'}</p>
+                    <a href="${source.url}" target="_blank" class="citation-url">
+                        <i class="fas fa-external-link-alt"></i> ${source.url}
+                    </a>
+                    ${source.snippet ? `<p class="citation-snippet">${source.snippet}</p>` : ''}
+                    <div class="mt-3">
+                        <a href="${source.url}" target="_blank" class="btn btn-primary btn-sm">
+                            <i class="fas fa-external-link-alt"></i> Open Source
+                        </a>
+                    </div>
+                </div>
+            `;
+        } else {
+            content.innerHTML = `
+                <div class="citation-details">
+                    <p class="text-muted">Source information not available for citation [${citationNum}].</p>
+                </div>
+            `;
+        }
+        
+        // Handle modal hidden event
+        modalElement.addEventListener('hidden.bs.modal', function(e) {
+            modalIsOpen = false;
+            // Restore focus to message input after modal closes
+            setTimeout(() => {
+                if (messageInput) {
+                    messageInput.focus();
+                }
+            }, 100);
+        }, { once: true });
+        
+        modal.show();
+    }
+    
+    // Initialize and parse existing citations
+    function initializeCitations() {
+        document.querySelectorAll('.message-content').forEach(function(el) {
+            const text = el.textContent;
+            const citationRegex = /\[(\d+)\]\s*\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
+            let match;
+            
+            while ((match = citationRegex.exec(text)) !== null) {
+                citationSources[match[1]] = {
+                    title: match[2],
+                    url: match[3],
+                    snippet: ''
+                };
+            }
+        });
+    }
+    
+    // Initialize citations on load
+    initializeCitations();
+    
+    // Format existing messages
+    document.querySelectorAll('.message-content').forEach(function(el) {
+        if (el.getAttribute('data-formatted') !== 'true') {
+            const content = el.innerHTML;
+            el.innerHTML = formatMessage(content);
+            el.setAttribute('data-formatted', 'true');
+            
+            // Add citation handlers
+            el.querySelectorAll('.citation-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const citationNum = this.getAttribute('data-citation');
+                    showCitationModal(citationNum);
+                });
+            });
+        }
+    });
+    
+    // Clear chat
+    btnClearChat.addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear the chat history?')) {
+            fetch('/api/tutor/clear-history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    phase_id: phaseId,
+                    module_id: moduleId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    chatContainer.innerHTML = '';
+                    const welcomeMessage = `
+                        <p>👋 Hi there! I'm your AI tutor for <strong>${topic}</strong>.</p>
+                        <p>I'm here to help you understand concepts, answer questions, and guide you through this learning module. What would you like to learn about today?</p>
+                    `;
+                    addMessageToChat('assistant', welcomeMessage);
+                    citationSources = {};
+                } else {
+                    alert('Error clearing chat history: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error clearing chat history');
+            });
+        }
+    });
+    
+    // Load resources
+    function loadResources() {
+        // Show loading indicators
+        document.getElementById('videosLoading').classList.remove('d-none');
+        document.getElementById('papersLoading').classList.remove('d-none');
+        document.getElementById('webLoading').classList.remove('d-none');
+        
+        // Clear previous resources
+        document.getElementById('videosList').innerHTML = '';
+        document.getElementById('papersList').innerHTML = '';
+        document.getElementById('webList').innerHTML = '';
+        
+        fetch(`/api/tutor/resources?topic=${encodeURIComponent(topic)}&type=all`)
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading indicators
+                document.getElementById('videosLoading').classList.add('d-none');
+                document.getElementById('papersLoading').classList.add('d-none');
+                document.getElementById('webLoading').classList.add('d-none');
+                
+                if (data.status === 'success') {
+                    // Populate videos
+                    const videosList = document.getElementById('videosList');
+                    if (data.resources.youtube && data.resources.youtube.length > 0) {
+                        data.resources.youtube.forEach((video, index) => {
+                            const videoCard = createResourceCard('video', video);
+                            videoCard.style.animationDelay = `${index * 0.1}s`;
+                            videosList.appendChild(videoCard);
+                        });
+                    } else {
+                        videosList.innerHTML = '<p class="text-muted text-center w-100">No videos found</p>';
+                    }
+                    
+                    // Populate papers
+                    const papersList = document.getElementById('papersList');
+                    if (data.resources.papers && data.resources.papers.length > 0) {
+                        data.resources.papers.forEach((paper, index) => {
+                            const paperCard = createResourceCard('paper', paper);
+                            paperCard.style.animationDelay = `${index * 0.1}s`;
+                            papersList.appendChild(paperCard);
+                        });
+                    } else {
+                        papersList.innerHTML = '<p class="text-muted text-center w-100">No papers found</p>';
+                    }
+                    
+                    // Populate web resources
+                    const webList = document.getElementById('webList');
+                    if (data.resources.web && data.resources.web.length > 0) {
+                        data.resources.web.forEach((resource, index) => {
+                            const webCard = createResourceCard('web', resource);
+                            webCard.style.animationDelay = `${index * 0.1}s`;
+                            webList.appendChild(webCard);
+                        });
+                    } else {
+                        webList.innerHTML = '<p class="text-muted text-center w-100">No web resources found</p>';
+                    }
+                } else {
+                    showResourceError();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading resources:', error);
+                showResourceError();
+            });
+    }
+    
+    // Create resource card
+    function createResourceCard(type, data) {
+        const card = document.createElement('div');
+        card.className = 'resource-card';
+        
+        let content = '';
+        
+        if (type === 'video') {
+            content = `
+                <img src="${data.thumbnail}" class="resource-thumbnail" alt="${data.title}" loading="lazy">
+                <div class="resource-content">
+                    <h6 class="resource-title">${data.title}</h6>
+                    <div class="resource-meta">
+                        <i class="fas fa-user"></i> ${data.channelTitle}
+                    </div>
+                    <a href="${data.url}" target="_blank" class="resource-link">
+                        <i class="fas fa-play"></i> Watch
+                    </a>
+                </div>
+            `;
+        } else if (type === 'paper') {
+            const authors = Array.isArray(data.authors) ? data.authors.join(', ') : 'Unknown';
+            content = `
+                <div class="resource-content">
+                    <h6 class="resource-title">${data.title}</h6>
+                    <div class="resource-meta">
+                        <i class="fas fa-users"></i> ${authors}<br>
+                        <i class="fas fa-calendar"></i> ${data.year} • 
+                        <i class="fas fa-quote-right"></i> ${data.citations} citations
+                    </div>
+                    <a href="${data.url}" target="_blank" class="resource-link">
+                        <i class="fas fa-file-pdf"></i> Read Paper
+                    </a>
+                </div>
+            `;
+        } else if (type === 'web') {
+            content = `
+                <div class="resource-content">
+                    <h6 class="resource-title">${data.title}</h6>
+                    <p class="resource-meta">${data.snippet}</p>
+                    <div class="resource-meta">
+                        <i class="fas fa-globe"></i> ${data.displayLink}
+                    </div>
+                    <a href="${data.link}" target="_blank" class="resource-link">
+                        <i class="fas fa-external-link-alt"></i> Visit
+                    </a>
+                </div>
+            `;
+        }
+        
+        card.innerHTML = content;
+        return card;
+    }
+    
+    // Show resource error
+    function showResourceError() {
+        document.getElementById('videosLoading').classList.add('d-none');
+        document.getElementById('papersLoading').classList.add('d-none');
+        document.getElementById('webLoading').classList.add('d-none');
+        
+        const errorMessage = '<p class="text-danger text-center w-100">Error loading resources</p>';
+        document.getElementById('videosList').innerHTML = errorMessage;
+        document.getElementById('papersList').innerHTML = errorMessage;
+        document.getElementById('webList').innerHTML = errorMessage;
+    }
+    
+    // Refresh resources
+    btnRefreshResources.addEventListener('click', loadResources);
+    
+    // Initialize syntax highlighting if available
+    if (typeof hljs !== 'undefined') {
+        hljs.highlightAll();
+    }
+    
+    // Enhanced Fullscreen Management
+    function enterFullscreen(chatCard, expandBtn) {
+        isFullscreen = true;
+        chatCard.classList.add('chat-fullscreen');
+        expandBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        expandBtn.title = 'Minimize';
+        
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('chat-in-fullscreen');
+        
+        // Scroll chat to bottom after fullscreen transition
+        setTimeout(() => {
+            scrollToBottom();
+        }, 300);
+        
+        // Focus on input
+        setTimeout(() => {
+            messageInput.focus();
+        }, 100);
+    }
+    
+    function exitFullscreen(chatCard, expandBtn) {
+        isFullscreen = false;
+        chatCard.classList.remove('chat-fullscreen');
+        expandBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        expandBtn.title = 'Expand';
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+        document.body.classList.remove('chat-in-fullscreen');
+        
+        // Close any open modals when exiting fullscreen
+        if (modalIsOpen) {
+            const activeModal = document.querySelector('.modal.show');
+            if (activeModal) {
+                const modalInstance = bootstrap.Modal.getInstance(activeModal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }
+        }
+        
+        // Scroll to bottom after exiting fullscreen
+        setTimeout(() => {
+            scrollToBottom();
+        }, 300);
+    }
+    
+    // Expand button functionality
+    document.getElementById('expandBtn').addEventListener('click', function() {
+        const chatCard = document.querySelector('.chat-card');
+        const expandBtn = this;
+        
+        if (chatCard.classList.contains('chat-fullscreen')) {
+            exitFullscreen(chatCard, expandBtn);
+        } else {
+            enterFullscreen(chatCard, expandBtn);
+        }
+    });
+    
+    // Enhanced Escape key handling
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            // If modal is open, close modal first
+            if (modalIsOpen) {
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(activeModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                        return; // Don't exit fullscreen yet
+                    }
+                }
+            }
+            
+            // If no modal open and in fullscreen, exit fullscreen
+            if (isFullscreen && !modalIsOpen) {
+                const chatCard = document.querySelector('.chat-card');
+                const expandBtn = document.getElementById('expandBtn');
+                exitFullscreen(chatCard, expandBtn);
+            }
+        }
+    });
+    
+    // Handle window resize in fullscreen
+    window.addEventListener('resize', function() {
+        if (isFullscreen) {
+            setTimeout(() => {
+                scrollToBottom();
+            }, 100);
+        }
+    });
+    
+    // Prevent modal backdrop click from interfering with fullscreen
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-backdrop') && isFullscreen) {
+            e.stopPropagation();
+        }
+    });
+    
+    // Handle focus management
+    document.addEventListener('focusin', function(e) {
+        // If we're in fullscreen and focusing outside the chat card (except modals), 
+        // redirect focus to message input
+        if (isFullscreen && !modalIsOpen) {
+            const chatCard = document.querySelector('.chat-card');
+            const isInsideChatCard = chatCard.contains(e.target);
+            const isModalElement = e.target.closest('.modal');
+            
+            if (!isInsideChatCard && !isModalElement) {
+                e.preventDefault();
+                messageInput.focus();
+            }
+        }
+    });
+});
+</script>
+
+<style>
+/* Additional CSS for better fullscreen and modal interaction */
+.chat-in-fullscreen {
+    overflow: hidden !important;
+}
+
+.chat-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 1040 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    isolation: isolate;
+}
+
+.chat-fullscreen .chat-body {
+    height: calc(100vh - 160px) !important;
+}
+
+.chat-fullscreen .chat-header {
+    border-radius: 0 !important;
+}
+
+/* Modal styling improvements */
+.modal-content {
+    border: none;
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+}
+
+.modal-header {
+    background: var(--bg-gradient-cool, linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #8b5cf6 100%));
+    color: var(--text-inverse, #ffffff);
+    border-radius: var(--radius-lg, 16px) var(--radius-lg, 16px) 0 0;
+    border-bottom: none;
+    padding: var(--space-lg, 24px) var(--space-xl, 32px);
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    letter-spacing: -0.025em;
+}
+
+.modal-header .btn-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-sm, 8px);
+    opacity: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.modal-header .btn-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.modal-header .btn-close span {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: var(--space-xl, 32px);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-primary, #e2e8f0);
+    padding: var(--space-lg, 24px) var(--space-xl, 32px);
+    background: var(--surface-secondary, #f8fafc);
+    border-radius: 0 0 var(--radius-lg, 16px) var(--radius-lg, 16px);
+}
+
+.modal-footer .btn-secondary {
+    background: var(--surface-tertiary, #f1f5f9);
+    border: 1px solid var(--border-secondary, #cbd5e1);
+    color: var(--text-secondary, #475569);
+    padding: var(--space-sm, 8px) var(--space-lg, 24px);
+    border-radius: var(--radius-md, 12px);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: var(--text-secondary, #475569);
+    color: var(--text-inverse, #ffffff);
+    transform: translateY(-1px);
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+/* Prevent interaction issues */
+.modal-open .chat-fullscreen {
+    pointer-events: all;
+}
+
+.modal-open .modal {
+    pointer-events: all;
+}
+
+/* Smooth transitions */
+.chat-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-fullscreen {
+    transition: none !important;
+}
+
+/* Fix citation links in fullscreen */
+.chat-fullscreen .citation-link {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure proper scrolling in fullscreen */
+.chat-fullscreen .chat-container {
+    scrollbar-width: thin;
+}
+
+.chat-fullscreen .chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-fullscreen .chat-container::-webkit-scrollbar-track {
+    background: var(--surface-secondary, #f1f5f9);
+}
+
+.chat-fullscreen .chat-container::-webkit-scrollbar-thumb {
+    background: var(--primary-indigo, #4f46e5);
+    border-radius: 4px;
+}
+
+/* Loading animations for resource cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resource-card {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .chat-fullscreen .chat-body {
+        height: calc(100vh - 140px) !important;
+    }
+    
+    .chat-fullscreen .chat-footer {
+        padding: 15px 20px;
+    }
+    
+    .chat-fullscreen .chat-header {
+        padding: 15px 20px;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+}
+
+/* Focus styles for better accessibility */
+.chat-fullscreen .form-control:focus {
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+    border-color: var(--primary-indigo, #4f46e5) !important;
+}
+
+.chat-fullscreen .btn:focus {
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* Prevent text selection issues in fullscreen */
+.chat-fullscreen .chat-header {
+    user-select: none;
+}
+
+/* Better modal positioning in fullscreen */
+.chat-in-fullscreen .modal {
+    padding: 0 !important;
+}
+
+.chat-in-fullscreen .modal-dialog {
+    margin: 1.75rem auto;
+    max-height: calc(100vh - 3.5rem);
+    display: flex;
+    align-items: center;
+    min-height: calc(100vh - 3.5rem);
+}
+</style>
+
+{% endblock %}

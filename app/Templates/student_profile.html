@@ -1,0 +1,1766 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Student Dashboard - (PBSC-Ignite)
+{% endblock %}
+
+{% block content %}
+<!-- Enhanced Dashboard with Geometric Background -->
+<div class="dashboard-wrapper">
+    <!-- Geometric Background Elements -->
+    <div class="geometric-bg">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <div class="floating-shape shape-5"></div>
+        <div class="floating-shape shape-6"></div>
+    </div>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header" data-aos="fade-down">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="header-content">
+                        <div class="welcome-badge mb-3">
+                            <i class="fas fa-graduation-cap pulse-animation"></i>
+                            <span>Student Dashboard</span>
+                        </div>
+                        <h1 class="dashboard-title mb-2">
+                            Welcome back, <span class="gradient-text">{{ user.name or 'Student' }}</span>!
+                        </h1>
+                        <p class="dashboard-subtitle">
+                            Manage your profile and track your academic journey with AI-powered insights.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="header-stats" data-aos="fade-left" data-aos-delay="200">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number">100%</div>
+                                <div class="stat-label">Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div class="dashboard-view" id="dashboardView">
+        <div class="container">
+            <!-- Personal Information Card -->
+            <div class="dashboard-card enhanced-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-glow"></div>
+                <button class="edit-button btn-enhanced" onclick="toggleEdit()" title="Edit Profile">
+                    <i class="fas fa-pencil-alt"></i>
+                    <div class="btn-shine"></div>
+                </button>
+                
+                <h5 class="section-title">
+                    <div class="title-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    Personal Information
+                </h5>
+                
+                <div class="info-grid">
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="info-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Name</div>
+                            <div class="info-value">{{ user.name if user.name else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="250">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">{{ user.email if user.email else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value">{{ user.phone if user.phone else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="350">
+                        <div class="info-icon">
+                            <i class="fas fa-venus-mars"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Gender</div>
+                            <div class="info-value">{{ user.gender if user.gender else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Date of Birth</div>
+                            <div class="info-value">{{ user.dob if user.dob else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="450">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Year of Admission</div>
+                            <div class="info-value">{{ user.startdate if user.startdate else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="500">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-times"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Expected Graduation</div>
+                            <div class="info-value">{{ user.enddate if user.enddate else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Career Information Card -->
+            <div class="dashboard-card enhanced-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-glow"></div>
+                
+                <h5 class="section-title">
+                    <div class="title-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    Career Information
+                </h5>
+                
+                <div class="info-grid">
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="250">
+                        <div class="info-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Career Goal</div>
+                            <div class="info-value">{{ user.career_goal if user.career_goal else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="info-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Dream Company</div>
+                            <div class="info-value">{{ user.dream_company if user.dream_company else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="350">
+                        <div class="info-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Entrepreneurship Interest</div>
+                            <div class="info-value">{{ user.entrepreneurship_interest if user.entrepreneurship_interest else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="info-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Interested Industries</div>
+                            <div class="info-value">{{ user.interested_industries if user.interested_industries else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="450">
+                        <div class="info-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Company Preference</div>
+                            <div class="info-value">{{ user.company_preference if user.company_preference else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item full-width" data-aos="fade-up" data-aos-delay="500">
+                        <div class="info-icon">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">Personal Statement</div>
+                            <div class="info-value statement-text">{{ user.personal_statement if user.personal_statement else 'Not provided' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links Card -->
+            <div class="dashboard-card enhanced-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-glow"></div>
+                
+                <h5 class="section-title">
+                    <div class="title-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    Social Links
+                </h5>
+                
+                <div class="info-grid">
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="350">
+                        <div class="info-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">GitHub</div>
+                            <div class="info-value">
+                                {% if user.githubProfile %}
+                                    <a href="{{ user.githubProfile }}" target="_blank" class="social-link">
+                                        {{ user.githubProfile }}
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="info-icon">
+                            <i class="fab fa-linkedin"></i>
+                        </div>
+                        <div class="info-content">
+                            <div class="info-label">LinkedIn</div>
+                            <div class="info-value">
+                                {% if user.linkedinProfile %}
+                                    <a href="{{ user.linkedinProfile }}" target="_blank" class="social-link">
+                                        {{ user.linkedinProfile }}
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Form Container -->
+    <div class="form-container" id="formContainer">
+        <button class="close-form btn-enhanced" onclick="toggleEdit()">
+            <i class="fas fa-times"></i>
+            <div class="btn-shine"></div>
+        </button>
+        
+        <div class="form-wrapper">
+            <div class="form-header" data-aos="fade-down">
+                <h2 class="form-title">
+                    <i class="fas fa-edit gradient-text me-2"></i>
+                    Edit Your Profile
+                </h2>
+                <p class="form-subtitle">Update your information to get personalized recommendations</p>
+            </div>
+            
+            <!-- FIXED FORM: Removed preventDefault and async handling -->
+            <form action="/student_profile" method="post" class="enhanced-form" id="profileForm">
+                <!-- Personal Information Section -->
+                <div class="form-section" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="section-title">
+                        <div class="title-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        Personal Information
+                    </h5>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user"></i>
+                                Full Name
+                            </label>
+                            <input type="text" class="form-control enhanced-input" id="name" name="name" 
+                                   value="{{ user.name if user.name else '' }}" placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                Email Address
+                            </label>
+                            <input type="email" class="form-control enhanced-input" id="email" name="email" 
+                                   value="{{ user.email if user.email else '' }}" placeholder="Enter your email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <input type="tel" class="form-control enhanced-input" id="phone" name="phone" 
+                                   value="{{ user.phone if user.phone else '' }}" placeholder="Enter your phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="gender" class="form-label">
+                                <i class="fas fa-venus-mars"></i>
+                                Gender
+                            </label>
+                            <select class="form-control enhanced-input" id="gender" name="gender">
+                                <option value="">Select Gender</option>
+                                <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dob" class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Date of Birth
+                            </label>
+                            <input type="date" class="form-control enhanced-input" id="dob" name="dob" 
+                                   value="{{ user.dob if user.dob else '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="startdate" class="form-label">
+                                <i class="fas fa-calendar-check"></i>
+                                Admission Date
+                            </label>
+                            <input type="date" class="form-control enhanced-input" id="startdate" name="startdate" 
+                                   value="{{ user.startdate if user.startdate else '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="enddate" class="form-label">
+                                <i class="fas fa-calendar-times"></i>
+                                Expected Graduation
+                            </label>
+                            <input type="date" class="form-control enhanced-input" id="enddate" name="enddate" 
+                                   value="{{ user.enddate if user.enddate else '' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career Aspirations Section -->
+                <div class="form-section" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="section-title">
+                        <div class="title-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        Career Aspirations
+                    </h5>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="career_goal" class="form-label">
+                                <i class="fas fa-bullseye"></i>
+                                Career Goal
+                            </label>
+                            <input type="text" class="form-control enhanced-input" id="career_goal" name="career_goal" 
+                                   value="{{ user.career_goal if user.career_goal else '' }}" 
+                                   placeholder="e.g., Data Scientist, AI Engineer">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dream_company" class="form-label">
+                                <i class="fas fa-building"></i>
+                                Dream Company
+                            </label>
+                            <input type="text" class="form-control enhanced-input" id="dream_company" name="dream_company" 
+                                   value="{{ user.dream_company if user.dream_company else '' }}" 
+                                   placeholder="e.g., Google, Tesla, Microsoft">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="entrepreneurship_interest" class="form-label">
+                                <i class="fas fa-rocket"></i>
+                                Entrepreneurship Interest
+                            </label>
+                            <select class="form-control enhanced-input" id="entrepreneurship_interest" name="entrepreneurship_interest">
+                                <option value="">Select Option</option>
+                                <option value="Yes" {% if user.entrepreneurship_interest == 'Yes' %}selected{% endif %}>Yes</option>
+                                <option value="No" {% if user.entrepreneurship_interest == 'No' %}selected{% endif %}>No</option>
+                                <option value="Maybe" {% if user.entrepreneurship_interest == 'Maybe' %}selected{% endif %}>Maybe</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="interested_industries" class="form-label">
+                                <i class="fas fa-industry"></i>
+                                Interested Industries
+                            </label>
+                            <input type="text" class="form-control enhanced-input" id="interested_industries" name="interested_industries" 
+                                   value="{{ user.interested_industries if user.interested_industries else '' }}" 
+                                   placeholder="e.g., Technology, Healthcare, Finance">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="company_preference" class="form-label">
+                                <i class="fas fa-exchange-alt"></i>
+                                Company Preference
+                            </label>
+                            <select class="form-control enhanced-input" id="company_preference" name="company_preference">
+                                <option value="">Select Preference</option>
+                                <option value="Service-Based" {% if user.company_preference == 'Service-Based' %}selected{% endif %}>Service-Based</option>
+                                <option value="Product-Based" {% if user.company_preference == 'Product-Based' %}selected{% endif %}>Product-Based</option>
+                                <option value="Both" {% if user.company_preference == 'Both' %}selected{% endif %}>Both</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="personal_statement" class="form-label">
+                                <i class="fas fa-quote-left"></i>
+                                Personal Statement
+                            </label>
+                            <textarea class="form-control enhanced-input" id="personal_statement" name="personal_statement" 
+                                      rows="4" placeholder="Tell us about your vision and how we can help you achieve your dreams...">{{ user.personal_statement if user.personal_statement else '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Links Section -->
+                <div class="form-section" data-aos="fade-up" data-aos-delay="300">
+                    <h5 class="section-title">
+                        <div class="title-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        Social Links
+                    </h5>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="githubProfile" class="form-label">
+                                <i class="fab fa-github"></i>
+                                GitHub Profile
+                            </label>
+                            <input type="url" class="form-control enhanced-input" id="githubProfile" name="githubProfile" 
+                                   value="{{ user.githubProfile if user.githubProfile else '' }}" 
+                                   placeholder="https://github.com/username">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="linkedinProfile" class="form-label">
+                                <i class="fab fa-linkedin"></i>
+                                LinkedIn Profile
+                            </label>
+                            <input type="url" class="form-control enhanced-input" id="linkedinProfile" name="linkedinProfile" 
+                                   value="{{ user.linkedinProfile if user.linkedinProfile else '' }}" 
+                                   placeholder="https://linkedin.com/in/username">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="form-buttons" data-aos="fade-up" data-aos-delay="400">
+                    <button type="submit" class="btn btn-primary btn-enhanced" id="submitBtn">
+                        <i class="fas fa-save me-2"></i>
+                        <span>Save Changes</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-enhanced" onclick="toggleEdit()">
+                        <i class="fas fa-times me-2"></i>
+                        <span>Cancel</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Success Message -->
+<div id="successMessage" class="success-notification">
+    <div class="notification-content">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-text">
+            <div class="notification-title">Success!</div>
+            <div class="notification-message">Your profile has been updated successfully.</div>
+        </div>
+    </div>
+    <div class="notification-progress"></div>
+</div>
+
+<style>
+/* Enhanced CSS Variables */
+:root {
+    /* Primary Colors */
+    --primary-blue: #3b82f6;
+    --primary-blue-dark: #1d4ed8;
+    --secondary-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-purple: #8b5cf6;
+    
+    /* Text Colors */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-light: #94a3b8;
+    --text-muted: #cbd5e1;
+    
+    /* Background Colors */
+    --bg-white: #ffffff;
+    --bg-light: #f8fafc;
+    --bg-subtle: #f1f5f9;
+    --surface: #ffffff;
+    
+    /* Border & Effects */
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    
+    /* Layout */
+    --border-radius: 12px;
+    --border-radius-lg: 20px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Dashboard Wrapper */
+.dashboard-wrapper {
+    position: relative;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-white) 0%, var(--bg-light) 100%);
+}
+
+/* Geometric Background Shapes */
+.geometric-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.floating-shape {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(16, 185, 129, 0.08));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: float 8s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50px;
+    top: 10%;
+    left: -5%;
+    transform: rotate(45deg);
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    border-radius: 30px;
+    top: 60%;
+    right: -3%;
+    transform: rotate(-30deg);
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    top: 30%;
+    left: 80%;
+    animation-delay: 4s;
+}
+
+.shape-4 {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    top: 80%;
+    left: 20%;
+    transform: rotate(60deg);
+    animation-delay: 1s;
+}
+
+.shape-5 {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    top: 5%;
+    right: 25%;
+    transform: rotate(-45deg);
+    animation-delay: 3s;
+}
+
+.shape-6 {
+    width: 90px;
+    height: 90px;
+    border-radius: 45px;
+    top: 70%;
+    left: 5%;
+    transform: rotate(30deg);
+    animation-delay: 5s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    position: relative;
+    z-index: 10;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.dashboard-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.header-stats {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.stat-info {
+    text-align: left;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Dashboard View */
+.dashboard-view {
+    padding: 2rem 0;
+    position: relative;
+    z-index: 10;
+}
+
+/* Enhanced Dashboard Cards */
+.enhanced-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+}
+
+.enhanced-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-blue);
+}
+
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.enhanced-card:hover .card-glow {
+    opacity: 1;
+}
+
+/* Edit Button Enhancement */
+.edit-button {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    z-index: 20;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.edit-button:hover {
+    transform: scale(1.1) rotate(180deg);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Section Titles */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+}
+
+.title-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+}
+
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: var(--transition);
+}
+
+.info-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(5px);
+    box-shadow: var(--shadow-md);
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.statement-text {
+    line-height: 1.6;
+    max-width: none;
+}
+
+.social-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+}
+
+.social-link:hover {
+    color: var(--secondary-green);
+    transform: translateX(3px);
+}
+
+/* Enhanced Form Container */
+.form-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(248, 250, 252, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    padding: 2rem;
+    overflow-y: auto;
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--transition);
+}
+
+.form-container.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.close-form {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.close-form:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Form Wrapper */
+.form-wrapper {
+    max-width: 1000px;
+    margin: 2rem auto;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.form-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.form-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+/* Form Section */
+.form-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.form-section:last-of-type {
+    margin-bottom: 2rem;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.form-label i {
+    color: var(--primary-blue);
+    width: 16px;
+}
+
+/* Enhanced Form Controls */
+.enhanced-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.enhanced-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.enhanced-input::placeholder {
+    color: var(--text-light);
+}
+
+/* Enhanced Buttons */
+.btn-enhanced {
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-green));
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-enhanced:hover .btn-shine {
+    left: 100%;
+}
+
+/* Form Buttons */
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border);
+}
+
+/* Enhanced Success Notification */
+.success-notification {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 2000;
+    min-width: 350px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.success-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.notification-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--secondary-green), #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.notification-message {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.notification-progress {
+    height: 4px;
+    background: var(--border-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.notification-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(135deg, var(--secondary-green), #059669);
+    animation: progress 3s linear forwards;
+}
+
+@keyframes progress {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1.5rem 0;
+    }
+    
+    .header-stats {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .dashboard-title {
+        font-size: 2rem;
+        text-align: center;
+    }
+    
+    .dashboard-subtitle {
+        text-align: center;
+    }
+    
+    .enhanced-card {
+        padding: 1.5rem;
+    }
+    
+    .edit-button {
+        width: 45px;
+        height: 45px;
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .info-item {
+        padding: 1rem;
+    }
+    
+    .form-container {
+        padding: 1rem;
+    }
+    
+    .form-wrapper {
+        padding: 2rem;
+        margin: 1rem auto;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+    }
+    
+    .close-form {
+        width: 45px;
+        height: 45px;
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+    
+    .success-notification {
+        right: 1rem;
+        left: 1rem;
+        top: 1rem;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-title {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .floating-shape {
+        display: none;
+    }
+}
+
+/* Scrollbar Customization */
+.form-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 4px;
+}
+
+.form-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-green));
+}
+
+/* AOS Animation Enhancements */
+[data-aos] {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .floating-shape {
+        animation: none;
+    }
+}
+
+/* Focus States */
+.btn-enhanced:focus,
+.enhanced-input:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .floating-shape,
+    .edit-button,
+    .close-form,
+    .success-notification {
+        display: none;
+    }
+    
+    .enhanced-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        box-shadow: none;
+        border: 1px solid var(--border);
+    }
+}
+</style>
+
+<script>
+// Fixed JavaScript - Resolved form submission and animation issues
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEnhancedFeatures();
+    initializeAccessibility();
+    initializeAnimations();
+    checkForSuccessMessage();
+});
+
+function initializeEnhancedFeatures() {
+    // Add enhanced hover effects to cards (reduced intensity to prevent layout issues)
+    document.querySelectorAll('.enhanced-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+
+    // Add ripple effects to buttons
+    document.querySelectorAll('.btn-enhanced').forEach(button => {
+        button.addEventListener('click', createRippleEffect);
+    });
+
+    // Enhanced info item interactions (reduced scale to prevent layout shift)
+    document.querySelectorAll('.info-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+}
+
+function initializeAccessibility() {
+    // Keyboard navigation support
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('formContainer').classList.contains('active')) {
+            toggleEdit();
+        }
+    });
+
+    // REMOVED: Problematic focus management that was forcing focus to first input
+    // This was causing the issue where clicking any field would redirect to Name field
+}
+
+function initializeAnimations() {
+    // Simplified scroll animations with intersection observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+                
+                // Special animations for specific elements
+                if (entry.target.classList.contains('stat-number')) {
+                    animateCounter(entry.target);
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe elements with data-aos
+    document.querySelectorAll('[data-aos]').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Observe stat numbers for counter animation
+    document.querySelectorAll('.stat-number').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+// FIXED: Simplified toggle edit function - removed complex animations causing issues
+function toggleEdit() {
+    const dashboardView = document.getElementById('dashboardView');
+    const formContainer = document.getElementById('formContainer');
+    
+    if (!dashboardView || !formContainer) {
+        console.error('Required elements not found');
+        return;
+    }
+    
+    if (formContainer.classList.contains('active')) {
+        // Hide form - simple approach
+        formContainer.classList.remove('active');
+        dashboardView.style.display = 'block';
+        document.body.style.overflow = 'auto';
+        
+        // Scroll to top of page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+    } else {
+        // Show form - simple approach
+        formContainer.classList.add('active');
+        dashboardView.style.display = 'none';
+        document.body.style.overflow = 'hidden';
+        
+        // Reset form scroll position
+        formContainer.scrollTop = 0;
+    }
+}
+
+// REMOVED: Complex form handling that was preventing normal submission
+// The form now submits normally to your Flask backend without JavaScript interference
+
+// Enhanced success notification
+function showSuccessNotification() {
+    const notification = document.getElementById('successMessage');
+    if (notification) {
+        notification.classList.add('show');
+        
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+}
+
+function showErrorNotification(message) {
+    // Create error notification
+    const notification = document.createElement('div');
+    notification.className = 'success-notification show error-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="notification-text">
+                <div class="notification-title">Error!</div>
+                <div class="notification-message">${message}</div>
+            </div>
+        </div>
+        <div class="notification-progress" style="background: #fee2e2;">
+            <div style="height: 100%; background: linear-gradient(135deg, #ef4444, #dc2626); animation: progress 4s linear forwards;"></div>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 4000);
+}
+
+// Check for success message from backend
+function checkForSuccessMessage() {
+    // Check URL parameters for success
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+        showSuccessNotification();
+        // Clean URL without reloading
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Check for error parameter
+    if (urlParams.get('error')) {
+        showErrorNotification(decodeURIComponent(urlParams.get('error')));
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
+// Utility Functions
+function createRippleEffect(e) {
+    const button = e.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+    
+    const rect = button.getBoundingClientRect();
+    circle.style.width = circle.style.height = diameter + 'px';
+    circle.style.left = (e.clientX - rect.left - radius) + 'px';
+    circle.style.top = (e.clientY - rect.top - radius) + 'px';
+    circle.classList.add('ripple');
+    
+    // Add CSS for ripple if not exists
+    if (!document.getElementById('ripple-styles')) {
+        const style = document.createElement('style');
+        style.id = 'ripple-styles';
+        style.textContent = `
+            .btn-enhanced {
+                position: relative;
+                overflow: hidden;
+            }
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 600ms linear;
+                background-color: rgba(255, 255, 255, 0.6);
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Remove existing ripple
+    const existingRipple = button.querySelector('.ripple');
+    if (existingRipple) {
+        existingRipple.remove();
+    }
+    
+    button.appendChild(circle);
+    
+    // Remove ripple after animation
+    setTimeout(() => {
+        if (button.contains(circle)) {
+            button.removeChild(circle);
+        }
+    }, 600);
+}
+
+function animateCounter(element) {
+    const target = parseInt(element.textContent);
+    if (isNaN(target)) return;
+    
+    const duration = 2000;
+    const start = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - start;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(easeOut * target);
+        
+        const suffix = element.textContent.includes('%') ? '%' : '';
+        element.textContent = current + suffix;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target + suffix;
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+// Add required CSS animations if not present
+function addRequiredStyles() {
+    if (!document.getElementById('dashboard-animations')) {
+        const additionalStyles = document.createElement('style');
+        additionalStyles.id = 'dashboard-animations';
+        additionalStyles.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes progress {
+                from { width: 0%; }
+                to { width: 100%; }
+            }
+            
+            .form-container {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+            
+            .form-container:not(.active) {
+                display: none;
+            }
+            
+            .form-container.active {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+            
+            .success-notification {
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+            
+            .success-notification.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            
+            /* Ensure smooth transitions */
+            .enhanced-card, .info-item {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+    }
+}
+
+// Initialize styles
+addRequiredStyles();
+
+// Performance monitoring
+console.log('Fixed Student Dashboard loaded successfully ✨');
+
+// Form validation helper (optional)
+function validateForm() {
+    const form = document.querySelector('.enhanced-form');
+    if (!form) return true;
+    
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.style.borderColor = '#ef4444';
+            isValid = false;
+        } else {
+            field.style.borderColor = '';
+        }
+    });
+    
+    return isValid;
+}
+
+// Export functions for testing (if needed)
+if (typeof window !== 'undefined') {
+    window.studentDashboard = {
+        toggleEdit,
+        showSuccessNotification,
+        showErrorNotification,
+        createRippleEffect,
+        animateCounter,
+        validateForm
+    };
+}
+</script>
+
+{% endblock %}

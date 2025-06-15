@@ -1,0 +1,1947 @@
+{% extends 'base.html' %}
+
+{% block title %}Day {{ day }} Assessment - {{ phase.name }}{% endblock %}
+
+{% block content %}
+
+<div class="assessment-container">
+    <!-- Assessment Header -->
+    <div class="assessment-header">
+        <div class="breadcrumb-nav">
+            <a href="{{ url_for('roadmap_bp.roadmap') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Learning Plan</span>
+            </a>
+        </div>
+        
+        <div class="assessment-hero">
+            <div class="hero-content">
+                <div class="assessment-badge">
+                    <i class="fas fa-clipboard-check"></i>
+                    Day {{ day }} Assessment
+                </div>
+                <h1 class="assessment-title">{{ phase.name }}</h1>
+                <p class="assessment-subtitle">Test your understanding of today's learning objectives</p>
+                
+                <!-- Assessment Type Indicator -->
+                <div class="assessment-type-indicator">
+                    {% set task_title = day_content.task or day_content.title or day_content.name or 'Learning Task' %}
+                    {% if 'code' in task_title.lower() or 'project' in task_title.lower() or 'build' in task_title.lower() %}
+                        <span class="type-badge coding">
+                            <i class="fas fa-code"></i>
+                            Coding Assessment
+                        </span>
+                    {% else %}
+                        <span class="type-badge theory">
+                            <i class="fas fa-brain"></i>
+                            Theory Assessment
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="assessment-icon-large">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Content -->
+    <div class="assessment-content">
+        <!-- Day Summary -->
+        <div class="day-summary-card">
+            <h3>📚 Today's Learning Focus</h3>
+            <div class="summary-content">
+                <h4>{{ day_content.task or day_content.title or day_content.name or 'Learning Task' }}</h4>
+                <p>{{ day_content.description or day_content.content or day_content.desc or 'Daily learning activity' }}</p>
+                
+                <!-- Show task details if available -->
+                {% if day_content.tasks %}
+                <div class="task-details">
+                    <h6>Today's Tasks:</h6>
+                    <ul>
+                        {% for task_item in day_content.tasks %}
+                        <li>{{ task_item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if day_content.resources %}
+                <div class="resource-details">
+                    <h6>Resources:</h6>
+                    <ul>
+                        {% for resource in day_content.resources %}
+                        <li>{{ resource }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Assessment Loading Area -->
+        <div class="assessment-area">
+            <div id="assessmentLoading" class="assessment-loading">
+                <div class="spinner-border text-primary" role="status"></div>
+                <h4>🧠 Leo AI is generating your personalized assessment...</h4>
+                <p>This may take a few moments as we create questions tailored to your learning progress.</p>
+            </div>
+
+            <!-- Assessment Content (will be populated dynamically) -->
+            <div id="assessmentContent" class="assessment-content-area d-none">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Assessment Actions -->
+        <div class="assessment-actions">
+            <button id="generateAssessmentBtn" class="btn-generate-assessment" onclick="generateAssessment()">
+                <i class="fas fa-magic"></i>
+                <span>Generate Assessment with Leo AI</span>
+            </button>
+            
+            <button id="submitAssessmentBtn" class="btn-submit-assessment d-none" onclick="submitAssessment()">
+                <i class="fas fa-check-circle"></i>
+                <span>Submit Assessment</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Assessment Page Styles */
+/* Add these beautiful styles to your existing integrated_assessment.html */
+
+/* 🎨 BEAUTIFUL THEORY ASSESSMENT STYLES */
+.theory-assessment {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(29, 78, 216, 0.02) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+}
+
+.theory-assessment .assessment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.theory-assessment .assessment-header h3 {
+    color: #1d4ed8;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.theory-assessment .assessment-header p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Question Cards */
+.question-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.05);
+    transition: all 0.3s ease;
+}
+
+.question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.question-number {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.difficulty-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.difficulty-badge.easy {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.difficulty-badge.medium {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.difficulty-badge.hard {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.question-text {
+    color: #1e293b;
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Multiple Choice Options */
+.options-container {
+    display: grid;
+    gap: 1rem;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.option-label:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(29, 78, 216, 0.02) 100%);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateX(4px);
+}
+
+.option-label input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 1rem;
+    accent-color: #3b82f6;
+}
+
+.option-label:has(input:checked) {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border-color: #1d4ed8;
+    transform: translateX(4px);
+}
+
+.option-text {
+    flex: 1;
+    line-height: 1.5;
+}
+
+/* Text Areas */
+.short-answer-container textarea,
+.scenario-answer-container textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+}
+
+.short-answer-container textarea:focus,
+.scenario-answer-container textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: white;
+}
+
+.scenario-box {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+/* Assessment Info */
+.assessment-info {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.assessment-info p {
+    margin: 0.5rem 0;
+    color: #059669;
+    font-weight: 600;
+}
+
+/* 🎨 BEAUTIFUL CODING ASSESSMENT STYLES */
+.coding-assessment {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(91, 33, 182, 0.02) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid rgba(124, 58, 237, 0.1);
+    box-shadow: 0 8px 32px rgba(124, 58, 237, 0.1);
+}
+
+.coding-assessment .assessment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+}
+
+.coding-assessment .assessment-header h3 {
+    color: #7c3aed;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.coding-assessment .assessment-header h4 {
+    color: #1e293b;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.coding-assessment .assessment-header p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Requirements Section */
+.requirements-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(124, 58, 237, 0.1);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.05);
+}
+
+.requirements-section h5 {
+    color: #7c3aed;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.requirements-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.requirements-section li {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 8px;
+    position: relative;
+    padding-left: 3rem;
+}
+
+.requirements-section li::before {
+    content: "✓";
+    position: absolute;
+    left: 1rem;
+    color: #10b981;
+    font-weight: bold;
+    font-size: 1.125rem;
+}
+
+/* GitHub Section */
+.github-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(124, 58, 237, 0.1);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.05);
+}
+
+.github-section h5 {
+    color: #7c3aed;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.guidelines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.guideline-item {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+}
+
+.guideline-item strong {
+    color: #1e293b;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.guideline-item p {
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.guideline-item ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.guideline-item li {
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 0.25rem;
+}
+
+/* Submission Form */
+.submission-form {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(29, 78, 216, 0.02) 100%);
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.submission-form h6 {
+    color: #1d4ed8;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-group input[type="url"],
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-group input[type="url"]:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* Rubric Section */
+.rubric-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(124, 58, 237, 0.1);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.05);
+}
+
+.rubric-section h5 {
+    color: #7c3aed;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rubric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.rubric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+}
+
+.rubric-item .criteria {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.rubric-item .weight {
+    color: #7c3aed;
+    font-weight: 700;
+    background: rgba(124, 58, 237, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+}
+
+/* 🎨 MIXED ASSESSMENT STYLES */
+.mixed-assessment {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+}
+
+.mixed-assessment .assessment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(16, 185, 129, 0.1);
+}
+
+.mixed-assessment .assessment-header h3 {
+    color: #059669;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.practical-guidelines {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    border: 2px solid rgba(16, 185, 129, 0.1);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.05);
+}
+
+.practical-guidelines h6 {
+    color: #059669;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.guidelines-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.guidelines-list .guideline-item {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .guidelines-grid,
+    .rubric-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .question-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .option-label {
+        padding: 0.75rem 1rem;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Animations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.question-card,
+.requirements-section,
+.github-section,
+.rubric-section,
+.practical-guidelines {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.question-card:nth-child(2) { animation-delay: 0.1s; }
+.question-card:nth-child(3) { animation-delay: 0.2s; }
+.question-card:nth-child(4) { animation-delay: 0.3s; }
+.question-card:nth-child(5) { animation-delay: 0.4s; }
+
+.assessment-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Evaluation Results Styles */
+.evaluation-results {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(16, 185, 129, 0.1);
+}
+
+.results-header h3 {
+    color: #059669;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.score-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+
+.score-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.score-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.status-badge.passed {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.status-badge.needs-improvement {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+}
+
+.evaluation-feedback, .question-feedback, .next-steps {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.evaluation-feedback h4, .question-feedback h4, .next-steps h4 {
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+}
+
+.feedback-text, .next-steps-content {
+    color: #374151;
+    line-height: 1.6;
+}
+
+.question-result {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.question-result:last-child {
+    margin-bottom: 0;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.result-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.result-badge.correct {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.result-badge.incorrect {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.feedback-detail {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.results-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-continue, .btn-retake {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-continue {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.btn-continue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+}
+
+.btn-retake {
+    background: linear-gradient(135deg, rgba(241, 245, 249, 0.9) 0%, rgba(226, 232, 240, 0.8) 100%);
+    color: #374151;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+.btn-retake:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.assessment-header {
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.8) 100%);
+    border: 1.5px solid rgba(59, 130, 246, 0.2);
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+.assessment-hero {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.assessment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.assessment-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+
+.assessment-subtitle {
+    font-size: 1.125rem;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.assessment-type-indicator {
+    margin-top: 1rem;
+}
+
+.type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.type-badge.theory {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1d4ed8;
+    border: 2px solid rgba(29, 78, 216, 0.3);
+}
+
+.type-badge.coding {
+    background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+    color: #7c3aed;
+    border: 2px solid rgba(124, 58, 237, 0.3);
+}
+
+.hero-visual {
+    flex: 0 0 auto;
+}
+
+.assessment-icon-large {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.assessment-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.day-summary-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.03) 100%);
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.day-summary-card h3 {
+    color: #059669;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.summary-content h4 {
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.summary-content p {
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.assessment-area {
+    margin: 2rem 0;
+}
+
+.assessment-loading {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(29, 78, 216, 0.03) 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+.assessment-loading h4 {
+    color: #1d4ed8;
+    margin: 1rem 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.assessment-loading p {
+    color: #64748b;
+    margin: 0;
+}
+
+.assessment-content-area {
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(59, 130, 246, 0.1);
+}
+
+.assessment-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.btn-generate-assessment,
+.btn-submit-assessment {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 200px;
+    justify-content: center;
+}
+
+.btn-generate-assessment {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.btn-generate-assessment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+}
+
+.btn-submit-assessment {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-submit-assessment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.6);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .assessment-container {
+        padding: 1rem;
+    }
+    
+    .assessment-hero {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+        padding: 2rem;
+    }
+    
+    .assessment-title {
+        font-size: 2rem;
+    }
+    
+    .assessment-icon-large {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+    
+    .assessment-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+
+<script>
+// ✅ ENHANCED ASSESSMENT SYSTEM WITH AUTO TASK COMPLETION
+// Assessment Page JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎯 Assessment page loaded');
+    
+    // Check if assessment already completed first
+    checkExistingAssessment();
+});
+
+function checkExistingAssessment() {
+    console.log('🔍 Checking for existing assessment...');
+    
+    const phaseId = {{ phase_id }};
+    const day = {{ day }};
+    const weekIndex = {{ week_index }};
+    const taskIndex = {{ task_index }};
+    
+    // Check if assessment already exists
+    fetch('/api/assessment/check-existing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            phase_id: phaseId,
+            day: day,
+            week_index: weekIndex,
+            task_index: taskIndex
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'completed') {
+            console.log('✅ Found existing assessment results');
+            showExistingResults(data.assessment_record);
+        } else if (data.status === 'failed') {
+            console.log('❌ Previous attempt failed - allowing retake');
+            showRetakeOption(data.assessment_record);
+        } else {
+            console.log('🆕 No existing assessment - generating new one');
+            // Auto-generate assessment on page load
+            setTimeout(() => {
+                generateAssessment();
+            }, 1000);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error checking existing assessment:', error);
+        // Fallback to generating new assessment
+        setTimeout(() => {
+            generateAssessment();
+        }, 1000);
+    });
+}
+
+function showExistingResults(assessmentRecord) {
+    console.log('📊 Displaying existing results:', assessmentRecord);
+    
+    const loading = document.getElementById('assessmentLoading');
+    const content = document.getElementById('assessmentContent');
+    const generateBtn = document.getElementById('generateAssessmentBtn');
+    const submitBtn = document.getElementById('submitAssessmentBtn');
+    
+    // Hide loading and buttons for completed assessments
+    loading.classList.add('d-none');
+    generateBtn.style.display = 'none';
+    submitBtn.style.display = 'none';
+    
+    // Show existing results
+    content.classList.remove('d-none');
+    showEvaluationResults({
+        status: 'success',
+        evaluation: assessmentRecord.evaluation,
+        is_existing: true,
+        submitted_at: assessmentRecord.submitted_at
+    });
+}
+
+function showRetakeOption(assessmentRecord) {
+    console.log('🔄 Showing retake option for failed attempt');
+    
+    const loading = document.getElementById('assessmentLoading');
+    const content = document.getElementById('assessmentContent');
+    const generateBtn = document.getElementById('generateAssessmentBtn');
+    const submitBtn = document.getElementById('submitAssessmentBtn');
+    
+    loading.classList.add('d-none');
+    content.classList.remove('d-none');
+    
+    // Hide submit button initially for retake view
+    submitBtn.classList.add('d-none');
+    
+    // Update button text for retake
+    generateBtn.innerHTML = '<i class="fas fa-redo"></i> <span>Retake Assessment</span>';
+    
+    // Show previous results first
+    content.innerHTML = `
+        <div class="previous-attempt">
+            <div class="attempt-header">
+                <h3>📋 Previous Attempt Results</h3>
+                <div class="attempt-score ${assessmentRecord.evaluation.score >= 70 ? 'passed' : 'failed'}">
+                    ${assessmentRecord.evaluation.score}% - ${assessmentRecord.evaluation.score >= 70 ? 'PASSED' : 'FAILED'}
+                </div>
+            </div>
+            
+            <div class="attempt-feedback">
+                <p><strong>Feedback:</strong> ${assessmentRecord.evaluation.feedback}</p>
+                ${assessmentRecord.evaluation.score < 70 ? 
+                    '<p class="retry-message"><strong>🎯 You need 70% or higher to complete this assessment. Review the materials and try again!</strong></p>' : 
+                    '<p class="success-message"><strong>🎉 Congratulations! You have completed this assessment.</strong></p>'
+                }
+            </div>
+            
+            <div class="retake-actions">
+                ${assessmentRecord.evaluation.score < 70 ? 
+                    '<button onclick="generateAssessment()" class="btn-retake-now"><i class="fas fa-redo"></i> Retake Assessment Now</button>' :
+                    '<button onclick="window.location.href=\'/road-map\'" class="btn-continue"><i class="fas fa-arrow-right"></i> Continue Learning</button>'
+                }
+            </div>
+        </div>
+    `;
+}
+
+function generateAssessment() {
+    console.log('🧠 Generating assessment...');
+    
+    const loading = document.getElementById('assessmentLoading');
+    const content = document.getElementById('assessmentContent');
+    const generateBtn = document.getElementById('generateAssessmentBtn');
+    const submitBtn = document.getElementById('submitAssessmentBtn');
+    
+    // Show loading state
+    loading.classList.remove('d-none');
+    content.classList.add('d-none');
+    
+    // Hide submit button during generation
+    submitBtn.classList.add('d-none');
+    
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Generating...</span>';
+    
+    // Get assessment data from page
+    const phaseId = {{ phase_id }};
+    const day = {{ day }};
+    const weekIndex = {{ week_index }};
+    const taskIndex = {{ task_index }};
+    const dayContent = {{ day_content | tojson }};
+    
+    console.log(`📝 Assessment generation request:`, {
+        phaseId, day, weekIndex, taskIndex, dayContent
+    });
+    
+    // Generate assessment via API
+    fetch('/api/assessment/generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            day_content: dayContent,
+            phase_id: phaseId,
+            week_index: weekIndex,
+            task_index: taskIndex,
+            use_smart_detection: true,
+            is_retake: true
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('✅ Assessment generated:', data.assessment);
+            displayAssessment(data.assessment);
+        } else {
+            console.error('❌ Assessment generation failed:', data.error);
+            showErrorMessage(data.error || 'Failed to generate assessment');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Network error:', error);
+        showErrorMessage('Network error. Please try again.');
+    })
+    .finally(() => {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-magic"></i> <span>Regenerate Assessment</span>';
+    });
+}
+
+function displayAssessment(assessment) {
+    console.log('📋 Displaying assessment:', assessment);
+    
+    const loading = document.getElementById('assessmentLoading');
+    const content = document.getElementById('assessmentContent');
+    const submitBtn = document.getElementById('submitAssessmentBtn');
+    
+    loading.classList.add('d-none');
+    content.classList.remove('d-none');
+    
+    // ALWAYS show submit button when assessment is displayed
+    submitBtn.classList.remove('d-none');
+    submitBtn.style.display = 'flex';
+    
+    // Reset submit button state
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Submit Assessment</span>';
+    
+    // Determine assessment type
+    const assessmentType = assessment.assessment_type || 'theory';
+    
+    console.log(`🎯 Assessment type detected: ${assessmentType}`);
+    console.log(`✅ Submit button should now be visible`);
+    
+    if (assessmentType === 'theory') {
+        displayTheoryAssessment(assessment);
+    } else if (assessmentType === 'coding') {
+        displayCodingAssessment(assessment);
+    } else if (assessmentType === 'mixed') {
+        displayMixedAssessment(assessment);
+    } else {
+        console.log('⚠️ Unknown assessment type, defaulting to theory');
+        displayTheoryAssessment(assessment);
+    }
+}
+
+// ✅ ENHANCED: Updated submitAssessment function with better logging
+function submitAssessment() {
+    console.log('📤 Submitting assessment...');
+    
+    const submitBtn = document.getElementById('submitAssessmentBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Submitting...</span>';
+    
+    // Collect form data based on assessment type
+    const theoryForm = document.getElementById('theoryAssessmentForm');
+    const codingForm = document.getElementById('codingAssessmentForm');
+    const mixedForm = document.getElementById('mixedAssessmentForm');
+    
+    let assessmentAnswers = {};
+    let assessmentType = 'theory';
+    
+    if (theoryForm) {
+        assessmentType = 'theory';
+        const formData = new FormData(theoryForm);
+        for (let [key, value] of formData.entries()) {
+            assessmentAnswers[key] = value;
+        }
+        console.log('📝 Theory answers collected:', assessmentAnswers);
+        
+    } else if (codingForm) {
+        assessmentType = 'coding';
+        const formData = new FormData(codingForm);
+        assessmentAnswers = {
+            github_url: formData.get('github_url'),
+            description: formData.get('description'),
+            submission_type: 'github_repository'
+        };
+        console.log('💻 Coding submission collected:', assessmentAnswers);
+        
+    } else if (mixedForm) {
+        assessmentType = 'mixed';
+        const formData = new FormData(mixedForm);
+        assessmentAnswers = {
+            project_description: formData.get('project_description'),
+            github_url: formData.get('github_url'),
+            key_learnings: formData.get('key_learnings'),
+            challenges: formData.get('challenges'),
+            submission_type: 'practical_project'
+        };
+        console.log('🔀 Mixed submission collected:', assessmentAnswers);
+        
+    } else {
+        showErrorMessage('No assessment form found');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Submit Assessment</span>';
+        return;
+    }
+    
+    // Validate answers
+    if (!assessmentAnswers || Object.keys(assessmentAnswers).length === 0) {
+        showErrorMessage('Please complete the assessment before submitting');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Submit Assessment</span>';
+        return;
+    }
+    
+    // Submit to backend
+    const phaseId = {{ phase_id }};
+    const day = {{ day }};
+    const weekIndex = {{ week_index }};
+    const taskIndex = {{ task_index }};
+    const dayContent = {{ day_content | tojson }};
+    
+    console.log('📤 Submitting assessment with context:', {
+        phaseId, day, weekIndex, taskIndex, assessmentType
+    });
+    
+    fetch('/api/assessment/submit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            phase_id: phaseId,
+            day: day,
+            week_index: weekIndex,
+            task_index: taskIndex,
+            assessment_type: assessmentType,
+            assessment_answers: assessmentAnswers,
+            day_content: dayContent,
+            submitted_at: new Date().toISOString()
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('✅ Assessment submitted successfully:', data);
+            showEvaluationResults(data);
+        } else {
+            console.error('❌ Assessment submission failed:', data.error);
+            showErrorMessage(data.error || 'Failed to submit assessment');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Submit Assessment</span>';
+        }
+    })
+    .catch(error => {
+        console.error('❌ Submission error:', error);
+        showErrorMessage('Network error. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>Submit Assessment</span>';
+    });
+}
+
+// MODIFY your showEvaluationResults function (around line 400-500)
+// ADD the LinkedIn button right after the results actions
+
+function showEvaluationResults(data) {
+    console.log('📊 Evaluation results received:', data);
+    
+    const content = document.getElementById('assessmentContent');
+    const submitBtn = document.getElementById('submitAssessmentBtn');
+    
+    // Hide submit button
+    submitBtn.style.display = 'none';
+    
+    // ✅ NEW: Auto-complete the task if assessment passed
+    if (data.status === 'success' && (data.evaluation?.score || 0) >= 70) {
+        console.log('🎉 Assessment passed! Auto-completing the day task...');
+        autoCompleteTaskToggle();
+    }
+    
+    // Show evaluation results
+    let resultsHtml = `
+        <div class="evaluation-results">
+            <div class="results-header">
+                <h3>🎉 Assessment Complete!</h3>
+                <div class="score-circle">
+                    <span class="score-number">${data.evaluation?.score || 0}%</span>
+                    <span class="score-label">Score</span>
+                </div>
+            </div>
+            
+            <div class="results-content">
+                <div class="status-badge ${(data.evaluation?.score || 0) >= 70 ? 'passed' : 'needs-improvement'}">
+                    ${(data.evaluation?.score || 0) >= 70 ? '✅ Passed - Task Completed!' : '📚 Needs Improvement'}
+                </div>
+                
+                <div class="evaluation-feedback">
+                    <h4>📝 Detailed Feedback</h4>
+                    <div class="feedback-text">
+                        ${data.evaluation?.feedback || 'Great effort on completing the assessment!'}
+                    </div>
+                </div>
+    `;
+    
+    if (data.evaluation?.question_feedback && data.evaluation.question_feedback.length > 0) {
+        resultsHtml += `
+                <div class="question-feedback">
+                    <h4>📋 Question-by-Question Feedback</h4>
+        `;
+        
+        data.evaluation.question_feedback.forEach((qf, index) => {
+            resultsHtml += `
+                    <div class="question-result">
+                        <div class="question-header">
+                            <span>Question ${index + 1}</span>
+                            <span class="result-badge ${qf.correct ? 'correct' : 'incorrect'}">
+                                ${qf.correct ? '✅ Correct' : '❌ Incorrect'}
+                            </span>
+                        </div>
+                        <p class="feedback-detail">${qf.feedback}</p>
+                    </div>
+            `;
+        });
+        
+        resultsHtml += '</div>';
+    }
+    
+    resultsHtml += `
+                <div class="next-steps">
+                    <h4>🚀 Next Steps</h4>
+                    <div class="next-steps-content">
+                        ${data.evaluation?.next_steps || 'Continue with your learning journey!'}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 🚀 ADD LINKEDIN BUTTON HERE - ONLY SHOW IF PASSED -->
+            ${(data.evaluation?.score || 0) >= 70 ? `
+            <div class="linkedin-share-section" style="
+                margin: 2rem 0; 
+                padding: 1.5rem; 
+                background: linear-gradient(135deg, rgba(0, 119, 181, 0.05) 0%, rgba(0, 88, 133, 0.03) 100%); 
+                border: 2px solid rgba(0, 119, 181, 0.2); 
+                border-radius: 16px; 
+                text-align: center;
+            ">
+                <h4 style="color: #0077b5; margin-bottom: 1rem;">
+                    <i class="fab fa-linkedin"></i> Share Your Achievement
+                </h4>
+                <p style="color: #64748b; margin-bottom: 1.5rem;">
+                    Let your network know about your learning progress!
+                </p>
+                <button onclick="shareAssessmentToLinkedIn()" class="linkedin-share-btn" style="
+                    background: linear-gradient(135deg, #0077b5 0%, #005885 100%);
+                    color: white;
+                    border: none;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.3s ease;
+                    font-size: 1rem;
+                ">
+                    <i class="fab fa-linkedin"></i>
+                    Share Achievement on LinkedIn
+                </button>
+            </div>
+            ` : ''}
+            
+            <div class="results-actions">
+                <button onclick="window.location.href='/road-map'" class="btn-continue">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Continue Learning Journey</span>
+                </button>
+                
+                <button onclick="generateAssessment()" class="btn-retake">
+                    <i class="fas fa-redo"></i>
+                    <span>Retake Assessment</span>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    content.innerHTML = resultsHtml;
+    
+    // Show success notification with task completion info
+    const score = data.evaluation?.score || 0;
+    if (score >= 70) {
+        showSuccessMessage(`🎉 Assessment completed! Score: ${score}% - Day task automatically marked as complete!`);
+    } else {
+        showSuccessMessage(`Assessment completed! Score: ${score}%`);
+    }
+}
+
+// 🚀 ADD this new function at the end of your script section
+function shareAssessmentToLinkedIn() {
+    const button = document.querySelector('.linkedin-share-btn');
+    
+    // Show loading
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+    button.disabled = true;
+    
+    // Get current assessment data with HARDCODED LinkedIn ID for demo
+    const assessmentData = {
+        type: 'assessment_passed',
+        phase_name: '{{ phase.name }}',
+        day: {{ day }},
+        score: parseInt(document.querySelector('.score-number').textContent),
+        user_name: 'Demo User',
+        // 🚀 HARDCODED for demo - no database needed
+        linkedin_account_id: '9KDztbl5QFedLtfzuc4doQ'
+    };
+    
+    console.log('🔗 Sharing to LinkedIn with hardcoded ID:', assessmentData);
+    
+    // Direct API call to LinkedIn integration
+    fetch('/api/linkedin/publish-achievement', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(assessmentData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            button.innerHTML = '<i class="fas fa-check"></i> Posted Successfully!';
+            button.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            
+            showSuccessMessage('🎉 Achievement shared on LinkedIn successfully!');
+        } else {
+            button.innerHTML = '<i class="fas fa-exclamation"></i> Failed to Post';
+            button.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            
+            showSuccessMessage('❌ Failed to share: ' + data.message);
+            
+            setTimeout(() => {
+                button.innerHTML = '<i class="fab fa-linkedin"></i> Share Achievement on LinkedIn';
+                button.style.background = 'linear-gradient(135deg, #0077b5 0%, #005885 100%)';
+                button.disabled = false;
+            }, 3000);
+        }
+    })
+    .catch(error => {
+        console.error('LinkedIn sharing error:', error);
+        button.innerHTML = '<i class="fas fa-exclamation"></i> Network Error';
+        button.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+        
+        showSuccessMessage('❌ Network error while sharing to LinkedIn');
+        
+        setTimeout(() => {
+            button.innerHTML = '<i class="fab fa-linkedin"></i> Share Achievement on LinkedIn';
+            button.style.background = 'linear-gradient(135deg, #0077b5 0%, #005885 100%)';
+            button.disabled = false;
+        }, 3000);
+    });
+}
+
+// ✅ NEW: Function to automatically complete the task toggle
+function autoCompleteTaskToggle() {
+    console.log('🔄 Auto-completing task toggle...');
+    
+    // Get current assessment context
+    const phaseId = {{ phase_id }};
+    const day = {{ day }};
+    const weekIndex = {{ week_index }};
+    const dayIndex = {{ task_index }};
+    
+    console.log(`📝 Task completion data:`, {
+        phaseId, day, weekIndex, dayIndex
+    });
+    
+    // Call the task completion API
+    fetch('/complete-task', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            phase_id: phaseId,
+            week_index: weekIndex,
+            day_index: dayIndex,
+            completed: true,
+            auto_completed_by_assessment: true // Flag to indicate this was auto-completed
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('✅ Task automatically marked as complete!');
+            
+            // Show notification
+            setTimeout(() => {
+                showAutoCompleteNotification();
+            }, 2000);
+            
+        } else {
+            console.error('❌ Failed to auto-complete task:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Auto-completion error:', error);
+    });
+}
+
+// ✅ NEW: Special notification for auto task completion
+function showAutoCompleteNotification() {
+    const notification = document.createElement('div');
+    notification.className = 'auto-complete-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <div class="notification-text">
+                <strong>Task Completed!</strong>
+                <span>Day {{ day }} has been automatically marked as complete</span>
+            </div>
+        </div>
+    `;
+    
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '80px',
+        right: '20px',
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        color: 'white',
+        padding: '1rem 1.5rem',
+        borderRadius: '12px',
+        boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
+        zIndex: '10001',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '1rem',
+        fontWeight: '600',
+        minWidth: '300px',
+        transform: 'translateX(100%)',
+        transition: 'all 0.3s ease'
+    });
+    
+    notification.querySelector('.notification-content').style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    `;
+    
+    notification.querySelector('.notification-text').style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    `;
+    
+    notification.querySelector('.notification-text span').style.cssText = `
+        font-size: 0.875rem;
+        opacity: 0.9;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Animate out
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Include all the existing display functions (displayTheoryAssessment, displayCodingAssessment, etc.)
+function displayTheoryAssessment(assessment) {
+    const content = document.getElementById('assessmentContent');
+    
+    let html = `
+        <div class="theory-assessment">
+            <div class="assessment-header">
+                <h3>📝 Theory Assessment</h3>
+                <p>Answer the following questions to demonstrate your understanding:</p>
+            </div>
+            <form id="theoryAssessmentForm">
+    `;
+    
+    if (assessment.questions) {
+        assessment.questions.forEach((question, index) => {
+            html += `
+                <div class="question-card" data-question-id="${question.id || index}">
+                    <div class="question-header">
+                        <span class="question-number">Question ${index + 1}</span>
+                        <span class="difficulty-badge ${question.difficulty || 'medium'}">${question.difficulty || 'Medium'}</span>
+                    </div>
+                    <h4 class="question-text">${question.question}</h4>
+            `;
+            
+            if (question.type === 'multiple_choice' && question.options) {
+                html += '<div class="options-container">';
+                question.options.forEach((option, optIndex) => {
+                    html += `
+                        <label class="option-label">
+                            <input type="radio" name="question_${index}" value="${optIndex}">
+                            <span class="option-text">${option}</span>
+                        </label>
+                    `;
+                });
+                html += '</div>';
+            } else if (question.type === 'short_answer') {
+                html += `
+                    <div class="short-answer-container">
+                        <textarea name="question_${index}" placeholder="Write your answer here (2-3 sentences)..." rows="4"></textarea>
+                    </div>
+                `;
+            } else if (question.type === 'scenario') {
+                if (question.scenario) {
+                    html += `<div class="scenario-box"><strong>Scenario:</strong> ${question.scenario}</div>`;
+                }
+                html += `
+                    <div class="scenario-answer-container">
+                        <textarea name="question_${index}" placeholder="Describe your approach step by step..." rows="6"></textarea>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+        });
+    }
+    
+    html += `
+            </form>
+            <div class="assessment-info">
+                <p><strong>Estimated Time:</strong> ${assessment.estimated_time || '15-20 minutes'}</p>
+                <p><strong>Passing Score:</strong> ${assessment.passing_score || 70}%</p>
+            </div>
+        </div>
+    `;
+    
+    content.innerHTML = html;
+}
+
+function displayCodingAssessment(assessment) {
+    const content = document.getElementById('assessmentContent');
+    
+    let html = `
+        <div class="coding-assessment">
+            <div class="assessment-header">
+                <h3>💻 Coding Assessment</h3>
+                <h4>${assessment.project_title || 'Coding Project'}</h4>
+                <p>${assessment.project_description || 'Complete the coding project below'}</p>
+            </div>
+    `;
+    
+    if (assessment.requirements) {
+        html += `
+            <div class="requirements-section">
+                <h5>📋 Requirements</h5>
+                <ul>
+        `;
+        assessment.requirements.forEach(req => {
+            html += `<li>${req}</li>`;
+        });
+        html += '</ul></div>';
+    }
+    
+    html += `
+            <div class="submission-form">
+                <h6>🔗 Submit Your Repository</h6>
+                <form id="codingAssessmentForm">
+                    <div class="form-group">
+                        <label for="githubUrl">GitHub Repository URL:</label>
+                        <input type="url" id="githubUrl" name="github_url" placeholder="https://github.com/username/repository" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Project Description:</label>
+                        <textarea id="projectDescription" name="description" placeholder="Briefly describe what you built and any challenges you faced..." rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    content.innerHTML = html;
+}
+
+function displayMixedAssessment(assessment) {
+    const content = document.getElementById('assessmentContent');
+    
+    let html = `
+        <div class="mixed-assessment">
+            <div class="assessment-header">
+                <h3>🔀 Mixed Assessment: Theory + Practice</h3>
+                <h4>${assessment.project_title || 'Practical Learning Project'}</h4>
+                <p>${assessment.project_description || 'Complete this hands-on project to demonstrate your understanding'}</p>
+            </div>
+
+            <div class="submission-section">
+                <h5>📤 Submit Your Work</h5>
+                <form id="mixedAssessmentForm">
+                    <div class="form-group">
+                        <label for="projectDescription">📝 Describe what you accomplished:</label>
+                        <textarea 
+                            id="projectDescription" 
+                            name="project_description" 
+                            placeholder="Describe what you built/learned, the steps you took, challenges you faced, and key insights gained..." 
+                            rows="6" 
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="githubUrl">🔗 GitHub Repository (Optional):</label>
+                        <input 
+                            type="url" 
+                            id="githubUrl" 
+                            name="github_url" 
+                            placeholder="https://github.com/username/repository (if applicable)"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="keyLearnings">💡 Key Learnings:</label>
+                        <textarea 
+                            id="keyLearnings" 
+                            name="key_learnings" 
+                            placeholder="What are the most important things you learned from this exercise?" 
+                            rows="4" 
+                            required
+                        ></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    content.innerHTML = html;
+}
+
+function showErrorMessage(message) {
+    const content = document.getElementById('assessmentContent');
+    content.innerHTML = `
+        <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h4>Oops! Something went wrong</h4>
+            <p>${message}</p>
+            <button onclick="generateAssessment()" class="btn-retry">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+        </div>
+    `;
+    content.classList.remove('d-none');
+    document.getElementById('assessmentLoading').classList.add('d-none');
+}
+
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+    `;
+    
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        color: 'white',
+        padding: '1rem 1.5rem',
+        borderRadius: '12px',
+        boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)',
+        zIndex: '10000',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        fontWeight: '600'
+    });
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 4000);
+}
+</script>
+{% endblock %}

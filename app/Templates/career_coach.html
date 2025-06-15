@@ -1,0 +1,632 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Your Career Coach - The Leo Programmer 011
+{% endblock %}
+
+{% block content %}
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f4f4f4;
+        }
+        
+        .header-section {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #f4f4f4;
+            padding: 20px;
+         
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .input-section {
+            position: sticky;
+            bottom: 0;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .response-content {
+            font-weight: normal !important;
+        }
+        
+        .response-content h1, .response-content h2, .response-content h3, 
+        .response-content h4, .response-content h5, .response-content h6 {
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            color: #333;
+        }
+        
+        .response-content h2 {
+            font-size: 18px;
+            
+            padding-bottom: 5px;
+        }
+        
+        .response-content h3 {
+            font-size: 16px;
+            color: #007bff;
+        }
+        
+        .response-content p {
+            margin: 10px 0;
+            text-align: justify;
+        }
+        
+        .response-content ul, .response-content ol {
+            margin: 10px 0 10px 20px;
+            padding-left: 20px;
+        }
+        
+        .response-content li {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+        
+        .response-content a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            
+            transition: all 0.3s ease;
+        }
+        
+        .response-content a:hover {
+            color: #0056b3;
+            text-decoration: none;
+         
+            background-color: rgba(0, 123, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .response-content blockquote {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        
+        .response-content code {
+            background-color: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            color: #d63384;
+        }
+        
+        .response-content pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .response-content strong {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .response-content em {
+            font-style: italic;
+            color: #555;
+        }
+        
+        .chat-message {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Citation Styles */
+        .citation-link {
+            color: #007bff !important;
+            text-decoration: none !important;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(0, 123, 255, 0.1);
+            padding: 1px 4px;
+            border-radius: 3px;
+            border: 1px solid rgba(0, 123, 255, 0.3);
+            margin: 0 2px;
+        }
+        
+        .citation-link:hover {
+            background: #007bff !important;
+            color: white !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+            text-decoration: none !important;
+        }
+
+        .sources-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .sources-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .source-item {
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+
+        .source-number {
+            color: #007bff;
+            font-weight: bold;
+            margin-right: 8px;
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .source-link {
+            color: #007bff;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .source-link:hover {
+            color: #0056b3;
+            text-decoration: underline;
+            background-color: rgba(0, 123, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* Ensure citation links in main text are visible */
+        .response-content .citation-link {
+            display: inline !important;
+            color: #007bff !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+        }
+
+        /* Citation Modal */
+        .citation-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .citation-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .citation-modal-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .citation-modal-title {
+            color: #333;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .citation-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            margin-left: auto;
+        }
+
+        .citation-modal-close:hover {
+            color: #333;
+        }
+
+        .citation-modal-body {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .citation-modal-url {
+            color: #007bff;
+            text-decoration: none;
+            word-break: break-all;
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .citation-modal-url:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .response-content h1, .response-content h2, .response-content h3, 
+.response-content h4, .response-content h5, .response-content h6 {
+    border-bottom: none !important;
+    text-decoration: none !important;
+}
+    </style>
+
+    <div class="chat-container">
+        <!-- Fixed Header Section -->
+        <div class="header-section">
+            <div class="text-center mb-4">
+                <h4 id="heading" class="text-dark" style="font-size: 25px; color: #333; letter-spacing: 1px; font-weight: bold; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);">
+                    Hey Voyager 🌍, I'm <strong>Leo 🦁</strong> – Your Career Compass 🧭 Ready to Sail You Beyond the Horizon!
+                </h4>
+                <p style="font-size: 14px; font-weight: normal; color: #555; margin-top: 10px;">
+                    I'm all ears 👂 and ready to listen, your career guide through thick and thin 💪. 
+                    No matter how stormy the seas 🌊, I'm here to steer you safely through 🚀, guiding you past every obstacle ⛰️. 
+                    Together, we'll conquer your doubts 💭, sail past your fears 😨, and dock at the harbor of success 🏆. 
+                    Your adventure toward greatness starts now ⏳ – and I'm here to make sure you land where your dreams live 🌈!
+                </p>                
+            </div>
+
+            <div class="text-center">
+                <h3 id="main-heading" style="font-size: 32px; color: #333; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);">
+                    The Leo Programmer - 011 🦁
+                </h3>
+            </div>
+        </div>
+
+        <!-- Scrollable Chat Messages -->
+        <div class="chat-messages" id="chat-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <!-- User's message -->
+                    <div class="d-flex justify-content-end">
+                        <div class="chat-message bg-primary text-white p-3 rounded-3" style="max-width: 70%; font-size: 14px; font-weight: bold; line-height: 1.5; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);">
+                            {{ message.prompt }} <!-- User's input -->
+                        </div>
+                    </div>
+
+                    <!-- Leo's response -->
+                    <div class="d-flex justify-content-start">
+                        <div class="chat-message bg-light text-dark p-3 rounded-3 response-content" style="max-width: 70%; font-size: 14px; line-height: 1.6; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);">
+                            <div class="formatted-response">
+                                {{ message.response|safe }} <!-- Leo's response -->
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="d-flex justify-content-start">
+                    <div class="chat-message bg-light text-dark p-3 rounded-3 response-content" style="max-width: 70%; font-size: 14px; line-height: 1.6; box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);">
+                        Hey there! 👋 How are you doing today? I'm all ears 👂, ready to listen and help you with anything on your career journey! Let me know what's on your mind, and we'll figure it out together 🚀.
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Fixed Input Section -->
+        <div class="input-section">
+            <form id="chat-form" method="post" action="/your-career_coach-leo011">
+                <div class="d-flex gap-3">
+                    <textarea id="userQuery" name="userQuery" class="form-control" placeholder="Type your question here... (Press Enter to send, Shift+Enter for new line)" rows="2" style="border-radius: 25px; border: 2px solid #ddd; padding: 15px; font-size: 14px; resize: none; box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);"></textarea>
+                    <button type="submit" class="btn btn-warning px-4" style="border-radius: 25px; font-weight: bold; min-width: 80px; box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Citation Modal -->
+    <div id="citationModal" class="citation-modal">
+        <div class="citation-modal-content">
+            <div class="citation-modal-header">
+                <h5 class="citation-modal-title">Source Details</h5>
+                <button class="citation-modal-close" onclick="closeCitationModal()">&times;</button>
+            </div>
+            <div class="citation-modal-body" id="citationContent">
+                <!-- Citation details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store citation sources
+        let citationSources = {};
+
+        // Auto-scroll to bottom when new messages are added
+        function scrollToBottom() {
+            const chatBody = document.getElementById('chat-body');
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // Handle Enter key to send message
+        function handleEnter(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                const form = document.getElementById('chat-form');
+                const textarea = document.getElementById('userQuery');
+                
+                // Check if there's content to send
+                if (textarea.value.trim() !== '') {
+                    form.submit();
+                } else {
+                    console.log('Please enter a message before sending.');
+                }
+            }
+        }
+
+        // Enhanced citation formatting - FIXED to handle both "Sources:" and "**Sources:**"
+        function formatCitations() {
+            document.querySelectorAll('.formatted-response').forEach(function(responseDiv) {
+                let content = responseDiv.innerHTML;
+                
+                console.log('🔍 Processing content for citations...');
+                console.log('📄 Raw content preview:', content.substring(content.length - 500)); // Show end of content
+                
+                // First, add proper line breaks for better formatting
+                content = content.replace(/\*\*(🔥|💻|🚀|📝|⏭️) ([^*]+):\*\*/g, '<br><br><strong>$1 $2:</strong><br>');
+                content = content.replace(/• ([^<\n]+)/g, '<br>• $1');
+                content = content.replace(/(\d+)\. ([^<\n]+)/g, '<br>$1. $2');
+                
+                // Extract sources section - handle BOTH formats: "Sources:" and "**Sources:**"
+                const sourcesMatch = content.match(/(?:\*\*Sources:\*\*|Sources:)\s*((?:\[\d+\]\s*https?:\/\/[^\s\[\]]+(?:\s+|$))+)/i);
+                
+                console.log('🔍 Sources match result:', sourcesMatch ? 'Found' : 'Not found');
+                
+                if (sourcesMatch) {
+                    const sourcesText = sourcesMatch[1];
+                    const sources = [];
+                    
+                    console.log('📄 Sources text:', sourcesText);
+                    
+                    // Extract individual sources - improved pattern matching
+                    const sourceMatches = sourcesText.match(/\[(\d+)\]\s*(https?:\/\/[^\s\[\]]+)/g);
+                    
+                    console.log('🔍 Individual source matches:', sourceMatches);
+                    
+                    if (sourceMatches) {
+                        sourceMatches.forEach(function(match) {
+                            const sourceMatch = match.match(/\[(\d+)\]\s*(https?:\/\/[^\s\[\]]+)/);
+                            if (sourceMatch) {
+                                const num = sourceMatch[1];
+                                const url = sourceMatch[2];
+                                sources.push({ num: num, url: url });
+                                
+                                // Store in global citations object
+                                citationSources[num] = {
+                                    url: url,
+                                    title: getDomainFromUrl(url),
+                                    number: num
+                                };
+                                
+                                console.log(`✅ Added citation [${num}]: ${url}`);
+                            }
+                        });
+                    }
+                    
+                    console.log(`🔍 Total sources found: ${sources.length}`);
+                    
+                    // Create enhanced sources section
+                    let formattedSources = '<div class="sources-section"><div class="sources-title">📚 Sources:</div>';
+                    sources.forEach(function(source) {
+                        const domain = getDomainFromUrl(source.url);
+                        formattedSources += `<div class="source-item">
+                            <a href="${source.url}" target="_blank" class="citation-link" title="Open ${domain}" 
+                               style="text-decoration: none; color: #007bff; font-weight: 600; display: inline-block; margin-right: 10px;">
+                                [${source.num}]
+                            </a>
+                            <span style="color: #555;">${domain}</span>
+                        </div>`;
+                    });
+                    formattedSources += '</div>';
+                    
+                    // Replace the original sources section - handle BOTH formats
+                    content = content.replace(/(?:\*\*Sources:\*\*|Sources:)\s*(?:\[\d+\]\s*https?:\/\/[^\s\[\]]+(?:\s+|$))+/i, formattedSources);
+                    
+                    // CRITICAL: Add inline citation links throughout the text
+                    // This will find [1], [2], etc. in the main text and make them clickable
+                    sources.forEach(function(source) {
+                        // Look for standalone citation numbers in the text (not in URLs or already processed)
+                        const citationPattern = new RegExp(`\\[${source.num}\\](?!\\s*https?|</a>|[^\\s]*\\.[^\\s]*/)`, 'g');
+                        content = content.replace(citationPattern, function(match, offset, string) {
+                            // Make sure we're not inside an existing link or URL
+                            const beforeMatch = string.substring(Math.max(0, offset - 50), offset);
+                            const afterMatch = string.substring(offset, Math.min(string.length, offset + 50));
+                            
+                            // Skip if we're inside a URL or existing link
+                            if (beforeMatch.includes('href=') || afterMatch.includes('http') || beforeMatch.includes('<a ')) {
+                                return match;
+                            }
+                            
+                            console.log(`🔗 Making citation [${source.num}] clickable`);
+                            return `<a href="${source.url}" target="_blank" class="citation-link" title="Open ${getDomainFromUrl(source.url)}" style="color: #007bff; text-decoration: none; font-weight: 600;">[${source.num}]</a>`;
+                        });
+                    });
+                    
+                    console.log('✅ Citations processed and links added');
+                    responseDiv.innerHTML = content;
+                } else {
+                    console.log('❌ No sources section found in content');
+                }
+                
+                // Clean up any excessive line breaks
+                responseDiv.innerHTML = responseDiv.innerHTML.replace(/<br\s*\/?>\s*<br\s*\/?>/g, '<br><br>');
+            });
+        }
+
+        // Get domain from URL for display
+        function getDomainFromUrl(url) {
+            try {
+                const domain = new URL(url).hostname;
+                return domain.replace('www.', '');
+            } catch (e) {
+                return url;
+            }
+        }
+
+        // Show citation modal
+        function showCitationModal(citationNum) {
+            const modal = document.getElementById('citationModal');
+            const content = document.getElementById('citationContent');
+            
+            if (citationSources[citationNum]) {
+                const source = citationSources[citationNum];
+                content.innerHTML = `
+                    <p><strong>Source [${source.number}]:</strong></p>
+                    <p><strong>Website:</strong> ${source.title}</p>
+                    <a href="${source.url}" target="_blank" class="citation-modal-url">${source.url}</a>
+                    <p style="margin-top: 15px;">
+                        <a href="${source.url}" target="_blank" class="btn btn-primary btn-sm">
+                            <i class="fas fa-external-link-alt"></i> Open Source
+                        </a>
+                    </p>
+                `;
+            } else {
+                content.innerHTML = `<p>Source information not available.</p>`;
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        // Close citation modal
+        function closeCitationModal() {
+            document.getElementById('citationModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('citationModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            scrollToBottom();
+            formatCitations();
+            
+            // Debug: Check if citations were processed
+            setTimeout(function() {
+                const citationLinks = document.querySelectorAll('.citation-link');
+                console.log(`🔍 Found ${citationLinks.length} citation links after processing`);
+                console.log('🔍 Citation sources stored:', citationSources);
+                
+                if (citationLinks.length === 0) {
+                    console.log('⚠️ No citation links found - trying manual processing...');
+                    
+                    // Manual processing for current content
+                    document.querySelectorAll('.formatted-response').forEach(function(div) {
+                        console.log('📄 Raw HTML content:', div.innerHTML.substring(0, 500));
+                        console.log('📄 Text content:', div.textContent.substring(0, 500));
+                        
+                        // Try to find sources manually
+                        const text = div.innerHTML;
+                        if (text.includes('Sources:') && text.includes('[1]')) {
+                            console.log('✅ Found sources in content, reprocessing...');
+                            formatCitations();
+                        }
+                    });
+                }
+            }, 1000);
+        });
+
+        // Manual citation processing function (for testing)
+        function forceCitationProcessing() {
+            console.log('🔄 Manually processing citations...');
+            formatCitations();
+            
+            setTimeout(function() {
+                const citationLinks = document.querySelectorAll('.citation-link');
+                console.log(`🔍 After manual processing: ${citationLinks.length} citation links found`);
+            }, 500);
+        }
+
+        // Make it available globally for testing
+        window.forceCitationProcessing = forceCitationProcessing;
+
+        // Auto-resize textarea
+        document.getElementById('userQuery').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
+        // Add Enter key event listener
+        document.getElementById('userQuery').addEventListener('keydown', handleEnter);
+
+        // Handle form submission
+        document.getElementById('chat-form').addEventListener('submit', function(e) {
+            const textarea = document.getElementById('userQuery');
+            if (textarea.value.trim() === '') {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

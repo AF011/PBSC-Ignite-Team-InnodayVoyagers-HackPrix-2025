@@ -1,0 +1,538 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Sign Up - PBSC-Ignite
+{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        /* Blue Theme Color Palette */
+        --primary-blue: #1e3a8a;
+        --secondary-blue: #3b82f6;
+        --accent-blue: #60a5fa;
+        --light-blue: #93c5fd;
+        --dark-blue: #1e40af;
+        --electric-blue: #2563eb;
+        --neon-blue: #0ea5e9;
+        --cyan-accent: #06b6d4;
+        
+        /* Gray Scale */
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+        --red-500: #ef4444;
+        --red-50: #fef2f2;
+        --transition: all 0.2s ease;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Crimson+Text:wght@400;600&display=swap');
+
+    * {
+        font-family: 'Crimson Text', 'Times New Roman', serif;
+    }
+
+    body {
+        background-color: var(--gray-50);
+        min-height: 100vh;
+        color: var(--gray-700);
+    }
+
+    .hero-section {
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+        animation: slideDown 0.6s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .hero-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.75rem;
+        font-weight: 600;
+        color: var(--primary-blue);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.01em;
+    }
+
+    .hero-subtitle {
+        color: var(--gray-600);
+        font-size: 1.125rem;
+        font-weight: 400;
+    }
+
+    .signup-container {
+        animation: slideUp 0.6s ease-out 0.1s both;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .signup-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .signup-card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-header {
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-200);
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .card-title {
+        font-family: 'Playfair Display', serif;
+        color: var(--primary-blue);
+        font-weight: 600;
+        font-size: 1.375rem;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        color: var(--gray-700);
+        font-weight: 500;
+        margin-bottom: 0.375rem;
+        font-size: 0.875rem;
+        display: block;
+    }
+
+    .input-group {
+        display: flex;
+        border-radius: 8px;
+        border: 1px solid var(--gray-300);
+        transition: var(--transition);
+        overflow: hidden;
+    }
+
+    .input-group:focus-within {
+        border-color: var(--secondary-blue);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .input-group-text {
+        background: var(--gray-100);
+        border: none;
+        color: var(--gray-500);
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        border: none;
+        padding: 0.65rem 0.875rem;
+        font-size: 0.875rem;
+        transition: var(--transition);
+        background: white;
+        flex: 1;
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: var(--gray-400);
+    }
+
+    .btn-signup {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: white;
+        transition: var(--transition);
+        cursor: pointer;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-signup:hover:not(:disabled) {
+        background: linear-gradient(135deg, var(--dark-blue) 0%, var(--electric-blue) 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+
+    .btn-signup:active {
+        transform: translateY(1px);
+    }
+
+    .btn-signup:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .card-footer {
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        padding: 1rem 1.5rem;
+        text-align: center;
+    }
+
+    .signin-link {
+        color: var(--secondary-blue);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .signin-link:hover {
+        color: var(--primary-blue);
+        text-decoration: underline;
+    }
+
+    .alert {
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-danger {
+        background: var(--red-50);
+        color: var(--red-500);
+        border-left: 3px solid var(--red-500);
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .signup-card {
+            margin: 0 1rem;
+        }
+        
+        .card-body, .card-header {
+            padding: 1.25rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1;
+        }
+    }
+
+    /* Loading state */
+    .btn-signup.loading {
+        position: relative;
+        color: transparent;
+    }
+
+    .btn-signup.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Input focus effects */
+    .input-group:focus-within .input-group-text {
+        color: var(--secondary-blue);
+        background: rgba(59, 130, 246, 0.05);
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section text-center py-4">
+    <div class="container">
+        <h1 class="hero-title">Welcome to PBSC-Ignite</h1>
+        <p class="hero-subtitle">AI-Driven Career Readiness Platform</p>
+        
+        {% if message %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Sign Up Container -->
+<div class="container signup-container mt-3 pb-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="signup-card">
+                <div class="card-header">
+                    <h4 class="card-title">Create Your Account</h4>
+                </div>
+                
+                <div class="card-body">
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <form action="/sign_up" method="post" id="signupForm">
+                        <!-- First Row: Username and Name -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="username" 
+                                        name="username" 
+                                        placeholder="Username" 
+                                        required
+                                        autocomplete="username"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-user-tag"></i>
+                                    </div>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        id="name" 
+                                        name="name" 
+                                        placeholder="Your full name" 
+                                        required
+                                        autocomplete="name"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Second Row: Email and Phone -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <input 
+                                        type="email" 
+                                        class="form-control" 
+                                        id="email" 
+                                        name="email" 
+                                        placeholder="your@email.com" 
+                                        required
+                                        autocomplete="email"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-phone"></i>
+                                    </div>
+                                    <input 
+                                        type="tel" 
+                                        class="form-control" 
+                                        id="phone" 
+                                        name="phone" 
+                                        placeholder="Phone number" 
+                                        required
+                                        autocomplete="tel"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Third Row: Date of Birth (Full Width) -->
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <input 
+                                        type="date" 
+                                        class="form-control" 
+                                        id="dob" 
+                                        name="dob" 
+                                        required
+                                        autocomplete="bday"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fourth Row: Password and Confirm Password -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="password" 
+                                        name="password" 
+                                        placeholder="Password" 
+                                        required
+                                        autocomplete="new-password"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <input 
+                                        type="password" 
+                                        class="form-control" 
+                                        id="confirm_password" 
+                                        name="confirm_password" 
+                                        placeholder="Confirm password" 
+                                        required
+                                        autocomplete="new-password"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-signup" id="submitBtn">
+                                Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer">
+                    <small class="text-muted">
+                        Already have an account? 
+                        <a href="/sign_in" class="signin-link">Sign in here</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('signupForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+        
+        // Password confirmation validation
+        function validatePasswords() {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity("Passwords don't match");
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        }
+        
+        password.addEventListener('change', validatePasswords);
+        confirmPassword.addEventListener('keyup', validatePasswords);
+        
+        // Form submission with loading state
+        form.addEventListener('submit', function(e) {
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            setTimeout(() => {
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }, 3000);
+        });
+    });
+</script>
+
+{% endblock %}

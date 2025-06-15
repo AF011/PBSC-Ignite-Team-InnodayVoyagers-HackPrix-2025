@@ -1,0 +1,1716 @@
+{% extends "base.html" %}
+
+{% block title %}
+News Articles
+{% endblock %}
+
+{% block content %}
+<!-- Enhanced Modern Hero Section with Lottie -->
+<div class="hero-section">
+    <!-- Geometric Background Elements -->
+    <div class="geometric-bg">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <div class="floating-shape shape-5"></div>
+        <div class="floating-shape shape-6"></div>
+    </div>
+    
+    <div class="container">
+        <div class="row align-items-center min-vh-60">
+            <div class="col-lg-6 order-2 order-lg-1">
+                <div class="hero-content" data-aos="fade-right">
+                    <div class="content-badge mb-4">
+                        <i class="fas fa-newspaper pulse-animation"></i>
+                        <span>Latest Industry Insights & News</span>
+                    </div>
+                    
+                    <h1 class="hero-title mb-4">
+                        <span class="title-main">Discover</span>
+                        <span class="title-accent gradient-text">Amazing Stories</span>
+                    </h1>
+                    
+                    <p class="hero-subtitle mb-4">
+                        Stay informed with the latest articles and insights from around the world, 
+                        curated by AI for maximum relevance to your career journey.
+                    </p>
+                    
+                    <div class="hero-stats" data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-item">
+                            <div class="stat-number gradient-text">{{ stories|length }}</div>
+                            <div class="stat-label">Articles</div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-number gradient-text">{{ categories|length }}</div>
+                            <div class="stat-label">Categories</div>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <div class="stat-number gradient-text">24/7</div>
+                            <div class="stat-label">Updated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 order-1 order-lg-2">
+                <div class="hero-visual" data-aos="fade-left" data-aos-delay="200">
+                    <div class="lottie-container">
+                        <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+                        <dotlottie-player 
+                            src="https://lottie.host/b5d9a368-5e91-42bd-852e-d806eb3da8ba/59RcPq1kur.lottie" 
+                            background="transparent" 
+                            speed="1" 
+                            style="width: 100%; height: 400px; max-width: 500px;" 
+                            loop 
+                            autoplay>
+                        </dotlottie-player>
+                        
+                        <!-- Floating UI Elements -->
+                        <div class="floating-ui-element ui-element-1">
+                            <div class="ui-card">
+                                <i class="fas fa-clock text-primary"></i>
+                                <span>Real-time</span>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-ui-element ui-element-2">
+                            <div class="ui-card">
+                                <i class="fas fa-star text-warning"></i>
+                                <span>Curated</span>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-ui-element ui-element-3">
+                            <div class="ui-card">
+                                <i class="fas fa-brain text-success"></i>
+                                <span>AI Powered</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Category Navigation -->
+<div class="category-section">
+    <div class="container">
+        <div class="category-nav-wrapper">
+            <button id="leftArrow" class="nav-arrow nav-arrow-left btn-enhanced">
+                <i class="fas fa-chevron-left"></i>
+                <div class="btn-shine"></div>
+            </button>
+            
+            <div id="categoryContainer" class="category-container">
+                <div class="category-scroll">
+                    {% for category in categories %}
+                    <div class="category-item" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
+                        <a href="/news-articles?q={{ category|lower }}" 
+                           class="category-link {{ 'active' if query == category|lower else '' }}">
+                            <span class="category-text">{{ category }}</span>
+                            <div class="category-glow"></div>
+                            <div class="btn-shine"></div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <button id="rightArrow" class="nav-arrow nav-arrow-right btn-enhanced">
+                <i class="fas fa-chevron-right"></i>
+                <div class="btn-shine"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Articles Section -->
+<div class="articles-section">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2 class="section-title">
+                <i class="fas fa-newspaper gradient-text me-2"></i>
+                Latest Articles
+            </h2>
+            <div class="section-subtitle">Curated content just for you</div>
+        </div>
+        
+        <div class="articles-grid">
+            {% for story in stories %}
+            <article class="article-card enhanced-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                <div class="card-glow"></div>
+                
+                <div class="card-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="card-overlay">
+                        <div class="reading-time">
+                            <i class="fas fa-clock"></i>
+                            {{ story.readingTime | round(1) }} min read
+                        </div>
+                    </div>
+                    <div class="bookmark-btn" onclick="toggleBookmark(this)">
+                        <i class="far fa-bookmark"></i>
+                    </div>
+                </div>
+                
+                <div class="card-content">
+                    <div class="card-header">
+                        <div class="article-category">
+                            <i class="fas fa-tag me-1"></i>Tech News
+                        </div>
+                        <h3 class="article-title">{{ story.title }}</h3>
+                        <div class="article-meta">
+                            <div class="author-info">
+                                <div class="author-avatar">
+                                    {{ story.author.name[0]|upper }}
+                                </div>
+                                <div class="author-details">
+                                    <span class="author-name">{{ story.author.name }}</span>
+                                    <span class="word-count">{{ story.wordCount }} words</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-stats">
+                        <div class="stat-group">
+                            <div class="stat-item">
+                                <i class="fas fa-heart text-danger"></i>
+                                <span>{{ story.clapCount }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-comment text-primary"></i>
+                                <span>{{ story.responses }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <div class="relevance-score">
+                                    <span class="score">{{ range(85, 98) | random }}%</span>
+                                    <small>Relevant</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="{{ story.url }}" target="_blank" class="read-more-btn btn-enhanced">
+                            <span>Read Article</span>
+                            <i class="fas fa-external-link-alt"></i>
+                            <div class="btn-shine"></div>
+                        </a>
+                    </div>
+                    
+                    <!-- Reading Progress Bar -->
+                    <div class="reading-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        <!-- Enhanced Pagination -->
+        <div class="pagination-wrapper" data-aos="fade-up">
+            <div class="pagination-container">
+                {% if page > 0 %}
+                <a href="/news-articles?q={{ query }}&page={{ page - 1 }}" class="pagination-btn pagination-prev btn-enhanced">
+                    <i class="fas fa-chevron-left"></i>
+                    <span>Previous</span>
+                    <div class="btn-shine"></div>
+                </a>
+                {% endif %}
+                
+                <div class="page-indicator">
+                    <span class="current-page">Page {{ page + 1 }}</span>
+                    <div class="page-glow"></div>
+                </div>
+                
+                <a href="/news-articles?q={{ query }}&page={{ page + 1 }}" class="pagination-btn pagination-next btn-enhanced">
+                    <span>Next</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <div class="btn-shine"></div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enhanced Floating Action Button -->
+<div class="fab-container">
+    <button class="fab btn-enhanced" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+        <div class="fab-glow"></div>
+        <div class="btn-shine"></div>
+    </button>
+</div>
+
+<style>
+/* Enhanced Base Styles with Modern Variables */
+:root {
+    /* Primary Colors */
+    --primary-blue: #3b82f6;
+    --primary-blue-dark: #1d4ed8;
+    --secondary-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-purple: #8b5cf6;
+    
+    /* Text Colors */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-light: #94a3b8;
+    --text-muted: #cbd5e1;
+    
+    /* Background Colors */
+    --bg-white: #ffffff;
+    --bg-light: #f8fafc;
+    --bg-subtle: #f1f5f9;
+    --surface: #ffffff;
+    
+    /* Border & Effects */
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    
+    /* Layout */
+    --border-radius: 12px;
+    --border-radius-lg: 20px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Enhancements */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+/* Geometric Background Shapes */
+.geometric-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.floating-shape {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: float 8s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 180px;
+    height: 180px;
+    border-radius: 50px;
+    top: 15%;
+    left: -5%;
+    transform: rotate(45deg);
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 120px;
+    height: 120px;
+    border-radius: 30px;
+    top: 70%;
+    right: -3%;
+    transform: rotate(-30deg);
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    top: 40%;
+    left: 75%;
+    animation-delay: 4s;
+}
+
+.shape-4 {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    top: 85%;
+    left: 15%;
+    transform: rotate(60deg);
+    animation-delay: 1s;
+}
+
+.shape-5 {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    top: 10%;
+    right: 20%;
+    transform: rotate(-45deg);
+    animation-delay: 3s;
+}
+
+.shape-6 {
+    width: 140px;
+    height: 140px;
+    border-radius: 70px;
+    top: 60%;
+    left: 5%;
+    transform: rotate(30deg);
+    animation-delay: 5s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-25px) rotate(10deg); }
+}
+
+/* Enhanced Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--bg-white) 0%, var(--bg-light) 100%);
+    min-height: 70vh;
+    position: relative;
+    padding: 4rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.min-vh-60 {
+    min-height: 60vh;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.title-main {
+    display: block;
+    color: var(--text-primary);
+}
+
+.title-accent {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 400;
+    max-width: 600px;
+}
+
+/* Enhanced Content Badge */
+.content-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.content-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Enhanced Hero Stats */
+.hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.stat-divider {
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 1px;
+}
+
+/* Enhanced Hero Visual */
+.hero-visual {
+    position: relative;
+    z-index: 1;
+}
+
+.lottie-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Floating UI Elements */
+.floating-ui-element {
+    position: absolute;
+    animation: floatUI 4s ease-in-out infinite;
+}
+
+.ui-element-1 {
+    top: 15%;
+    right: 10%;
+    animation-delay: 0s;
+}
+
+.ui-element-2 {
+    bottom: 25%;
+    left: 5%;
+    animation-delay: 1.5s;
+}
+
+.ui-element-3 {
+    top: 65%;
+    right: 20%;
+    animation-delay: 3s;
+}
+
+@keyframes floatUI {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(3deg); }
+}
+
+.ui-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.ui-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Enhanced Category Navigation */
+.category-section {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.category-nav-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+}
+
+.nav-arrow {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-arrow:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.category-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.category-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 1rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.category-link {
+    display: block;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition);
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.category-link:hover {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.category-link.active {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    color: white;
+    border-color: transparent;
+    box-shadow: var(--shadow-md);
+}
+
+/* Enhanced Articles Section */
+.articles-section {
+    padding: 4rem 0;
+    background: var(--bg-light);
+    position: relative;
+}
+
+.articles-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Enhanced Article Cards */
+.enhanced-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+    box-shadow: var(--shadow-md);
+}
+
+.enhanced-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-blue);
+}
+
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.enhanced-card:hover .card-glow {
+    opacity: 1;
+}
+
+.card-image {
+    height: 200px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    position: relative;
+    overflow: hidden;
+}
+
+.image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: white;
+    font-size: 3rem;
+    opacity: 0.8;
+}
+
+.card-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.reading-time {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-lg);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.bookmark-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-secondary);
+}
+
+.bookmark-btn:hover {
+    background: var(--primary-blue);
+    color: white;
+    transform: scale(1.1);
+}
+
+.bookmark-btn.bookmarked {
+    background: var(--accent-orange);
+    color: white;
+}
+
+.bookmark-btn.bookmarked i {
+    transform: none;
+}
+
+.card-content {
+    padding: 2rem;
+}
+
+.article-category {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    color: var(--primary-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    margin-bottom: 1rem;
+}
+
+.article-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.word-count {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.card-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.stat-group {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.stat-item i {
+    font-size: 1rem;
+}
+
+.relevance-score {
+    text-align: center;
+}
+
+.relevance-score .score {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--secondary-green);
+    line-height: 1;
+}
+
+.relevance-score small {
+    color: var(--text-light);
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+/* Enhanced Read More Button */
+.read-more-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.read-more-btn:hover {
+    background: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-green));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+/* Reading Progress Bar */
+.reading-progress {
+    margin-top: 1rem;
+    height: 4px;
+    background: var(--border-light);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 2px;
+    transition: width 2s ease;
+}
+
+/* Enhanced Button Styling */
+.btn-enhanced {
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-2px);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-enhanced:hover .btn-shine {
+    left: 100%;
+}
+
+/* Enhanced Pagination */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem 3rem;
+    border-radius: 50px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+}
+
+.pagination-btn:hover {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.page-indicator {
+    color: var(--text-primary);
+    font-weight: 700;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    border-radius: 50px;
+    border: 2px solid var(--primary-blue);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.page-indicator:hover .page-glow {
+    opacity: 1;
+}
+
+/* Enhanced Floating Action Button */
+.fab-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+}
+
+.fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.4);
+}
+
+.fab-glow {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: glow 2s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+@keyframes glow {
+    from { opacity: 0.3; transform: scale(1); }
+    to { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* Toast Notification Styles */
+.toast-notification {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius-lg);
+    z-index: 10000;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-xl);
+    animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .hero-section {
+        padding: 2rem 0;
+        min-height: auto;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .stat-divider {
+        width: 30px;
+        height: 2px;
+    }
+    
+    .articles-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .category-nav-wrapper {
+        gap: 0.5rem;
+    }
+    
+    .nav-arrow {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 2rem;
+    }
+    
+    .fab-container {
+        bottom: 1rem;
+        right: 1rem;
+    }
+    
+    .floating-ui-element {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .card-content {
+        padding: 1.5rem;
+    }
+    
+    .category-scroll {
+        gap: 0.5rem;
+    }
+    
+    .category-link {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading States */
+.article-card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.article-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-green));
+}
+
+/* AOS Animation Enhancements */
+[data-aos] {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .floating-shape {
+        animation: none;
+    }
+    
+    .floating-ui-element {
+        animation: none;
+    }
+}
+
+/* Focus States */
+.btn-enhanced:focus,
+.category-link:focus,
+.pagination-btn:focus,
+.fab:focus {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+    .fab-container,
+    .floating-shape,
+    .floating-ui-element {
+        display: none;
+    }
+    
+    .article-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+<script>
+// Enhanced JavaScript with modern features
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEnhancedFeatures();
+    initializeScrollAnimations();
+    initializeCategoryNavigation();
+    initializeArticleInteractions();
+    initializeFloatingActionButton();
+    initializePerformanceOptimizations();
+});
+
+function initializeEnhancedFeatures() {
+    // Add enhanced hover effects to cards
+    document.querySelectorAll('.enhanced-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+            
+            // Animate progress bar
+            const progressBar = this.querySelector('.progress-bar');
+            if (progressBar) {
+                const randomProgress = Math.floor(Math.random() * 60 + 20);
+                progressBar.style.width = randomProgress + '%';
+            }
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            
+            // Reset progress bar
+            const progressBar = this.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+        });
+    });
+
+    // Add ripple effects to buttons
+    document.querySelectorAll('.btn-enhanced').forEach(button => {
+        button.addEventListener('click', createRippleEffect);
+    });
+}
+
+function initializeScrollAnimations() {
+    // Enhanced scroll animations with intersection observer
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+                
+                // Special animations for specific elements
+                if (entry.target.classList.contains('stat-number')) {
+                    animateCounter(entry.target);
+                }
+                
+                if (entry.target.classList.contains('enhanced-card')) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe elements with data-aos
+    document.querySelectorAll('[data-aos]').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Observe stat numbers for counter animation
+    document.querySelectorAll('.stat-number').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+function initializeCategoryNavigation() {
+    const leftArrow = document.getElementById('leftArrow');
+    const rightArrow = document.getElementById('rightArrow');
+    const categoryContainer = document.getElementById('categoryContainer');
+    const categoryScroll = categoryContainer.querySelector('.category-scroll');
+
+    // Enhanced arrow navigation
+    leftArrow.addEventListener('click', (e) => {
+        e.preventDefault();
+        categoryScroll.scrollBy({ left: -200, behavior: 'smooth' });
+        createRippleEffect(e);
+    });
+
+    rightArrow.addEventListener('click', (e) => {
+        e.preventDefault();
+        categoryScroll.scrollBy({ left: 200, behavior: 'smooth' });
+        createRippleEffect(e);
+    });
+
+    // Touch gestures for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    categoryContainer.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    categoryContainer.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleCategorySwipe();
+    });
+
+    function handleCategorySwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                rightArrow.click();
+            } else {
+                leftArrow.click();
+            }
+        }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft' && e.ctrlKey) {
+            e.preventDefault();
+            leftArrow.click();
+        } else if (e.key === 'ArrowRight' && e.ctrlKey) {
+            e.preventDefault();
+            rightArrow.click();
+        }
+    });
+}
+
+function initializeArticleInteractions() {
+    // Bookmark functionality
+    window.toggleBookmark = function(element) {
+        const icon = element.querySelector('i');
+        
+        if (element.classList.contains('bookmarked')) {
+            element.classList.remove('bookmarked');
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            showToast('Article removed from bookmarks');
+        } else {
+            element.classList.add('bookmarked');
+            icon.classList.remove('far');
+            icon.classList.add('fas');
+            showToast('Article bookmarked!');
+        }
+        
+        // Add animation
+        element.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            element.style.transform = 'scale(1)';
+        }, 200);
+    };
+
+    // Enhanced read more tracking
+    document.querySelectorAll('.read-more-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // Add loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Opening...';
+            this.style.pointerEvents = 'none';
+            
+            // Track interaction
+            console.log('Article read:', this.href);
+            
+            // Reset after a delay (in case user doesn't navigate away)
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.style.pointerEvents = 'auto';
+            }, 2000);
+        });
+    });
+
+    // Article card interactions
+    document.querySelectorAll('.enhanced-card').forEach(card => {
+        // Add click-to-expand functionality
+        card.addEventListener('click', function(e) {
+            // Don't trigger if clicking on interactive elements
+            if (e.target.closest('.read-more-btn, .bookmark-btn')) {
+                return;
+            }
+            
+            // Add subtle expand animation
+            this.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+}
+
+function initializeFloatingActionButton() {
+    const fab = document.querySelector('.fab');
+    
+    // Show/hide FAB based on scroll
+    let lastScrollY = window.scrollY;
+    
+    window.addEventListener('scroll', function() {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > 300) {
+            fab.style.opacity = '1';
+            fab.style.visibility = 'visible';
+            fab.style.transform = currentScrollY > lastScrollY ? 'scale(0.8)' : 'scale(1)';
+        } else {
+            fab.style.opacity = '0';
+            fab.style.visibility = 'hidden';
+        }
+        
+        lastScrollY = currentScrollY;
+    });
+
+    // Enhanced scroll to top function
+    window.scrollToTop = function() {
+        const scrollStep = -window.scrollY / (500 / 15);
+        const scrollInterval = setInterval(function(){
+            if (window.scrollY !== 0) {
+                window.scrollBy(0, scrollStep);
+            } else {
+                clearInterval(scrollInterval);
+            }
+        }, 15);
+        
+        // Show success toast
+        setTimeout(() => {
+            showToast('Back to top!');
+        }, 500);
+    };
+}
+
+function initializePerformanceOptimizations() {
+    // Lazy load images (if any)
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+
+    // Preload next page content
+    const nextPageLink = document.querySelector('.pagination-next');
+    if (nextPageLink) {
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = nextPageLink.href;
+        document.head.appendChild(link);
+    }
+}
+
+// Utility Functions
+function createRippleEffect(e) {
+    const button = e.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+    
+    circle.style.width = circle.style.height = diameter + 'px';
+    circle.style.left = (e.clientX - button.offsetLeft - radius) + 'px';
+    circle.style.top = (e.clientY - button.offsetTop - radius) + 'px';
+    circle.classList.add('ripple');
+    
+    // Add CSS for ripple if not exists
+    if (!document.getElementById('ripple-styles')) {
+        const style = document.createElement('style');
+        style.id = 'ripple-styles';
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 600ms linear;
+                background-color: rgba(255, 255, 255, 0.6);
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    const ripple = button.getElementsByClassName('ripple')[0];
+    if (ripple) {
+        ripple.remove();
+    }
+    
+    button.appendChild(circle);
+}
+
+function animateCounter(element) {
+    const target = parseInt(element.textContent);
+    const duration = 2000;
+    const start = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - start;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(easeOut * target);
+        
+        element.textContent = current;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target;
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+function showToast(message, duration = 3000) {
+    // Remove existing toast
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    // Auto-dismiss
+    setTimeout(() => {
+        if (document.body.contains(toast)) {
+            toast.style.animation = 'slideInUp 0.3s ease reverse';
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+    }, duration);
+}
+
+// Performance monitoring
+function trackPerformance() {
+    if ('performance' in window) {
+        window.addEventListener('load', () => {
+            const loadTime = performance.now();
+            console.log(`Enhanced News Articles page loaded in ${loadTime.toFixed(2)}ms`);
+        });
+    }
+}
+
+// Initialize performance tracking
+trackPerformance();
+
+// Analytics tracking (placeholder)
+function trackInteraction(action, element) {
+    console.log('Enhanced interaction:', action, element);
+}
+
+// Export functions for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        showToast,
+        animateCounter,
+        createRippleEffect
+    };
+}
+
+console.log('Enhanced News Articles page loaded successfully ✨');
+</script>
+
+{% endblock %}

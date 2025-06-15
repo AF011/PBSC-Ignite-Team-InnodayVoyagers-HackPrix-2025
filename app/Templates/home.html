@@ -1,0 +1,2151 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home - PBSC-Ignite AI Platform
+{% endblock %}
+
+{% block content %}
+<!-- Enhanced Hero Section with Geometric Background -->
+<div class="hero-section">
+    <!-- Geometric Background Elements -->
+    <div class="geometric-bg">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+        <div class="floating-shape shape-5"></div>
+    </div>
+    
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-75">
+            <div class="col-lg-6 order-2 order-lg-1">
+                <div class="hero-content" data-aos="fade-right">
+                    
+                    
+                    <h1 class="hero-title mb-4">
+                        Welcome to <br><span class="brand-text gradient-text">PBSC-Ignite</span>
+                    </h1>
+                    
+                    <p class="hero-subtitle mb-4">
+                        AI-Driven Career Readiness Platform with <strong class="text-primary">Perplexity-Enhanced Intelligence</strong>
+                    </p>
+                    <div class="ai-badge mb-4">
+                        <i class="fas fa-brain pulse-animation"></i>
+                        <span>Powered by AI & Real-time Industry Data</span>
+                    </div>
+                    <!-- Enhanced Personalized Welcome Message -->
+                    {% if session.user_id %}
+                    <div class="personalized-welcome mb-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="welcome-card">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-container me-3">
+                                    <div class="avatar-circle">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="status-indicator online"></div>
+                                    <div class="avatar-glow"></div>
+                                </div>
+                                <div class="welcome-text">
+                                    <h5 class="mb-1">Welcome back, {{ session.name or 'Learner' }}! 👋</h5>
+                                    <p class="mb-0 welcome-subtitle">Your AI-enhanced profile is ready for personalized guidance</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Enhanced Action Buttons -->
+                    <div class="hero-actions" data-aos="fade-up" data-aos-delay="400">
+                        <a href="/road-map" class="btn btn-primary btn-lg me-3 btn-enhanced">
+                            <i class="fas fa-route me-2"></i>
+                            <span>View My Roadmap</span>
+                            <div class="btn-shine"></div>
+                        </a>
+                        <a href="/your-career_coach-leo011" class="btn btn-outline-primary btn-lg btn-enhanced">
+                            <i class="fas fa-robot me-2"></i>
+                            <span>Chat with Leo</span>
+                            <div class="btn-shine"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 order-1 order-lg-2">
+                <div class="hero-visual" data-aos="fade-left" data-aos-delay="200">
+                    <div class="visual-container">
+                        <!-- Lottie Animation with Enhanced Container -->
+                        <div class="lottie-wrapper">
+                            <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+                            <dotlottie-player 
+                                src="https://lottie.host/a9920460-676d-4279-a684-6642699754b4/tqcvkmbNSd.lottie" 
+                                background="transparent" 
+                                speed="1" 
+                                style="width: 100%; height: 600px; max-width: 700px;" 
+                                loop 
+                                autoplay>
+                            </dotlottie-player>
+                        </div>
+                        
+                        <!-- Floating UI Elements -->
+                        <div class="floating-ui-element ui-element-1">
+                            <div class="ui-card">
+                                <i class="fas fa-chart-line text-success"></i>
+                                <span>95% Growth</span>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-ui-element ui-element-2">
+                            <div class="ui-card">
+                                <i class="fas fa-brain text-primary"></i>
+                                <span>AI Powered</span>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-ui-element ui-element-3">
+                            <div class="ui-card">
+                                <i class="fas fa-graduation-cap text-warning"></i>
+                                <span>Smart Learning</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Messages -->
+{% if message %}
+<div class="alert alert-danger alert-dismissible fade show m-3 enhanced-alert" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+
+<!-- Enhanced Intelligence Dashboard -->
+<section class="intelligence-dashboard py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title" data-aos="fade-up">
+                    <i class="fas fa-brain gradient-text me-2"></i>
+                    Your AI-Enhanced Learning Dashboard
+                </h2>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                    Powered by Perplexity AI & Industry Intelligence
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Enhanced Career Progress Card -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="intelligence-card card-hover-effect">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-chart-line me-2 text-primary"></i>Career Progress</h5>
+                            <div class="ai-indicator">
+                                <span class="pulse-dot"></span>
+                                <small>AI Enhanced</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="progress-circle mb-3">
+                            <svg class="progress-ring" width="100" height="100">
+                                <circle class="progress-ring-bg" cx="50" cy="50" r="40"></circle>
+                                <circle class="progress-ring-circle" cx="50" cy="50" r="40"></circle>
+                            </svg>
+                            <div class="progress-text">75%</div>
+                        </div>
+                        <p class="mb-2 fw-medium">Your learning journey is accelerating!</p>
+                        <small class="text-muted">Based on real-time industry analysis</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Skill Match Card -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="intelligence-card card-hover-effect">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-bullseye me-2 text-success"></i>Industry Match</h5>
+                            <div class="ai-indicator">
+                                <span class="pulse-dot pulse-green"></span>
+                                <small>Live Data</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="match-score mb-3">
+                            <div class="score-number gradient-text">92%</div>
+                            <div class="score-label">Match Score</div>
+                        </div>
+                        <p class="mb-2 fw-medium">Excellent alignment with market demands</p>
+                        <small class="text-muted">Updated with latest job market trends</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Next Actions Card -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="intelligence-card card-hover-effect">
+                    <div class="card-glow"></div>
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-rocket me-2 text-warning"></i>Next Steps</h5>
+                            <div class="ai-indicator">
+                                <span class="pulse-dot pulse-orange"></span>
+                                <small>AI Suggested</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="next-actions">
+                            <div class="action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-code text-primary"></i>
+                                </div>
+                                <span>Complete Python Module</span>
+                            </div>
+                            <div class="action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-certificate text-success"></i>
+                                </div>
+                                <span>Get AWS Certification</span>
+                            </div>
+                            <div class="action-item">
+                                <div class="action-icon">
+                                    <i class="fas fa-project-diagram text-info"></i>
+                                </div>
+                                <span>Build Portfolio Project</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced AI-Curated Articles Section -->
+<section class="articles-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title" data-aos="fade-up">
+                    <i class="fas fa-newspaper gradient-text me-2"></i>
+                    AI-Curated Industry Insights
+                </h2>
+                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+                    Personalized content based on your career goals
+                </p>
+            </div>
+        </div>
+
+        <div class="articles-grid">
+            {% for story in stories[:6] %}
+            <div class="article-card enhanced-article-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="card-glow"></div>
+                <div class="article-header">
+                    <div class="article-category">
+                        <i class="fas fa-tag me-1"></i>Tech Trends
+                    </div>
+                    <div class="relevance-score">
+                        <span class="score">{{ range(85, 98) | random }}%</span>
+                        <small>Relevant</small>
+                    </div>
+                </div>
+                
+                <div class="article-content">
+                    <h4 class="article-title">{{ story.title[:80] }}...</h4>
+                    <div class="article-meta">
+                        <span class="author">
+                            <i class="fas fa-user me-1"></i>{{ story.author.name }}
+                        </span>
+                        <span class="reading-time">
+                            <i class="fas fa-clock me-1"></i>{{ story.readingTime | round(1) }} min read
+                        </span>
+                    </div>
+                    
+                    <div class="article-engagement">
+                        <span class="engagement-item">
+                            <i class="fas fa-heart text-danger"></i> {{ story.clapCount }}
+                        </span>
+                        <span class="engagement-item">
+                            <i class="fas fa-comment text-primary"></i> {{ story.responses }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="article-footer">
+                    <a href="{{ story.url }}" target="_blank" class="btn btn-outline-primary btn-sm btn-enhanced">
+                        <span>Read Article</span>
+                        <i class="fas fa-external-link-alt ms-1"></i>
+                        <div class="btn-shine"></div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="/news-articles" class="btn btn-primary btn-lg btn-enhanced">
+                <i class="fas fa-newspaper me-2"></i>
+                <span>Explore All Articles</span>
+                <div class="btn-shine"></div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Professional Career Coach Section -->
+<section class="career-coach-section py-5">
+    <div class="container">
+        <div class="coach-main-card" data-aos="fade-up">
+            <div class="card-glow"></div>
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="coach-info">
+                        <div class="coach-header mb-4">
+                            <div class="coach-icon-wrapper">
+                                <div class="coach-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="ai-pulse-ring"></div>
+                                <div class="ai-pulse-ring-2"></div>
+                            </div>
+                            <div class="coach-title-section">
+                                <h2 class="coach-title">Meet Leo - Your AI Career Coach</h2>
+                                <p class="coach-subtitle">Enhanced with Perplexity AI and real-time industry intelligence, Leo provides personalized career guidance like never before.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="coach-features">
+                            <div class="feature-item" data-aos="fade-right" data-aos-delay="100">
+                                <div class="feature-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6>Real-time Industry Analysis</h6>
+                                    <p>Stay updated with latest market trends and demands</p>
+                                </div>
+                            </div>
+                            <div class="feature-item" data-aos="fade-right" data-aos-delay="200">
+                                <div class="feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6>Personalized Career Insights</h6>
+                                    <p>Get tailored advice based on your unique profile</p>
+                                </div>
+                            </div>
+                            <div class="feature-item" data-aos="fade-right" data-aos-delay="300">
+                                <div class="feature-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="feature-content">
+                                    <h6>AI-powered Learning Recommendations</h6>
+                                    <p>Discover the most effective learning paths for your goals</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="coach-actions mt-4" data-aos="fade-up" data-aos-delay="400">
+                            <a href="/your-career_coach-leo011" class="btn btn-primary btn-lg btn-enhanced me-3">
+                                <i class="fas fa-comments me-2"></i>
+                                <span>Start Conversation</span>
+                                <div class="btn-shine"></div>
+                            </a>
+                            <a href="/road-map" class="btn btn-outline-primary btn-lg btn-enhanced">
+                                <i class="fas fa-route me-2"></i>
+                                <span>View Roadmap</span>
+                                <div class="btn-shine"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="coach-demo" data-aos="fade-left" data-aos-delay="200">
+                        <div class="chat-preview-container">
+                            <div class="chat-header">
+                                <div class="chat-status">
+                                    <div class="status-dot"></div>
+                                    <span>Leo is online</span>
+                                </div>
+                                <div class="chat-info">
+                                    <i class="fas fa-shield-alt text-success me-1"></i>
+                                    <small>Secure & Private</small>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-preview">
+                                <div class="chat-message user-msg">
+                                    <div class="message-avatar user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="message-bubble user-bubble">
+                                        "What skills should I focus on for data science?"
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-message bot-msg">
+                                    <div class="message-avatar leo-avatar">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="message-bubble leo-bubble">
+                                        <div class="typing-indicator mb-2" id="typingIndicator">
+                                            <span></span><span></span><span></span>
+                                        </div>
+                                        <div class="leo-response" id="leoResponse" style="display: none;">
+                                            "Based on current market analysis, I recommend focusing on <strong>Python</strong>, <strong>machine learning frameworks</strong>, and <strong>cloud platforms</strong>. The demand for these skills has increased <span class="highlight">34% this quarter</span>!"
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-footer">
+                                <div class="powered-by">
+                                    <i class="fas fa-magic text-primary me-1"></i>
+                                    <small>Powered by Perplexity AI</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Enhanced Base Styles with Modern Variables */
+:root {
+    --primary-blue: #3b82f6;
+    --primary-blue-dark: #1d4ed8;
+    --secondary-green: #10b981;
+    --accent-orange: #f59e0b;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --bg-light: #f8fafc;
+    --bg-white: #ffffff;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --border-radius: 12px;
+    --border-radius-lg: 20px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Global Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+/* Geometric Background Shapes */
+.geometric-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.floating-shape {
+    position: absolute;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50px;
+    top: 10%;
+    left: -5%;
+    transform: rotate(45deg);
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    border-radius: 30px;
+    top: 60%;
+    right: -3%;
+    transform: rotate(-30deg);
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    top: 30%;
+    left: 70%;
+    animation-delay: 4s;
+}
+
+.shape-4 {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    top: 80%;
+    left: 20%;
+    transform: rotate(60deg);
+    animation-delay: 1s;
+}
+
+.shape-5 {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    top: 5%;
+    right: 15%;
+    transform: rotate(-45deg);
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* Enhanced Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    min-height: 90vh;
+    position: relative;
+    padding: 4rem 0;
+    display: flex;
+    align-items: center;
+}
+
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.brand-text {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 400;
+    max-width: 600px;
+}
+
+/* Enhanced AI Badge */
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    color: var(--primary-blue);
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.ai-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+    color: var(--primary-blue);
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Enhanced Welcome Card */
+.personalized-welcome {
+    margin: 2rem 0;
+}
+
+.welcome-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.welcome-card:hover::before {
+    left: 100%;
+}
+
+.welcome-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.avatar-container {
+    position: relative;
+}
+
+.avatar-circle {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    z-index: 2;
+}
+
+.avatar-glow {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: glow 2s ease-in-out infinite alternate;
+    z-index: 1;
+}
+
+@keyframes glow {
+    from { opacity: 0.3; transform: scale(1); }
+    to { opacity: 0.6; transform: scale(1.1); }
+}
+
+.status-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    border: 3px solid white;
+    z-index: 3;
+}
+
+.status-indicator.online {
+    background: var(--secondary-green);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Enhanced Action Buttons */
+.btn-enhanced {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    padding: 1rem 2rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-enhanced:hover .btn-shine {
+    left: 100%;
+}
+
+/* Enhanced Hero Visual */
+.hero-visual {
+    position: relative;
+    z-index: 1;
+}
+
+.visual-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.lottie-wrapper {
+    position: relative;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+}
+
+/* Floating UI Elements */
+.floating-ui-element {
+    position: absolute;
+    animation: floatUI 4s ease-in-out infinite;
+}
+
+.ui-element-1 {
+    top: 10%;
+    right: 10%;
+    animation-delay: 0s;
+}
+
+.ui-element-2 {
+    bottom: 20%;
+    left: 5%;
+    animation-delay: 1.5s;
+}
+
+.ui-element-3 {
+    top: 60%;
+    right: 20%;
+    animation-delay: 3s;
+}
+
+@keyframes floatUI {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+.ui-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.ui-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Enhanced Intelligence Dashboard */
+.intelligence-dashboard {
+    background: var(--bg-light);
+    position: relative;
+}
+
+.intelligence-dashboard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    font-weight: 400;
+}
+
+/* Enhanced Intelligence Cards */
+.intelligence-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-hover-effect:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+.card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.intelligence-card:hover .card-glow {
+    opacity: 1;
+}
+
+.intelligence-card .card-header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    background: transparent;
+}
+
+.intelligence-card .card-body {
+    padding: 1.5rem 2rem 2rem;
+}
+
+/* Enhanced AI Indicators */
+.ai-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--secondary-green);
+    font-weight: 600;
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--secondary-green);
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+.pulse-green {
+    background: var(--secondary-green);
+}
+
+.pulse-orange {
+    background: var(--accent-orange);
+}
+
+@keyframes pulse-dot {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Enhanced Progress Circle */
+.progress-circle {
+    position: relative;
+    display: inline-block;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.progress-ring-bg {
+    stroke: #e5e7eb;
+    stroke-width: 8;
+    fill: transparent;
+}
+
+.progress-ring-circle {
+    stroke: url(#progressGradient);
+    stroke-width: 8;
+    fill: transparent;
+    stroke-dasharray: 251;
+    stroke-dashoffset: 63;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+/* Enhanced Match Score */
+.match-score {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.score-number {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--secondary-green), #059669);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+/* Enhanced Next Actions */
+.action-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(5px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Enhanced Articles Section */
+.articles-section {
+    background: var(--bg-white);
+    position: relative;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.enhanced-article-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+}
+
+.enhanced-article-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+.article-header {
+    padding: 2rem 2rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.article-category {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    color: var(--primary-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.relevance-score {
+    text-align: center;
+}
+
+.relevance-score .score {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--secondary-green);
+}
+
+.relevance-score small {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.article-content {
+    padding: 1.5rem 2rem;
+}
+
+.article-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.article-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.article-engagement {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.engagement-item {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.article-footer {
+    padding: 0 2rem 2rem;
+}
+
+/* Enhanced Career Coach Section */
+.career-coach-section {
+    background: linear-gradient(135deg, var(--bg-light), #e2e8f0);
+    position: relative;
+}
+
+.career-coach-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 70% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.coach-main-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    padding: 3rem;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
+}
+
+.coach-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.coach-icon-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-right: 2rem;
+}
+
+.coach-icon {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    color: white;
+    border-radius: 50%;
+    width: 200%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    z-index: 2;
+}
+
+.ai-pulse-ring {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    animation: pulse-ring 2s infinite ease-out;
+}
+
+.ai-pulse-ring-2 {
+    position: absolute;
+    top: -16px;
+    left: -16px;
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    animation: pulse-ring 2s infinite ease-out;
+    animation-delay: 1s;
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+.coach-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.coach-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(10px);
+    box-shadow: var(--shadow-md);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    margin-right: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.feature-content h6 {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.feature-content p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Enhanced Chat Preview */
+.chat-preview-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-xl);
+}
+
+.chat-header,
+.chat-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--secondary-green);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+    animation: pulse-dot 2s infinite;
+}
+
+.chat-message {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.user-avatar {
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+    color: white;
+}
+
+.leo-avatar {
+    background: linear-gradient(135deg, var(--secondary-green), #059669);
+    color: white;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+}
+
+.user-bubble {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: var(--text-primary);
+}
+
+.leo-bubble {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+}
+
+/* Enhanced Typing Indicator */
+.typing-indicator {
+    display: flex;
+    gap: 8px;
+    padding: 0.5rem 0;
+}
+
+.typing-indicator span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(1); opacity: 0.6; }
+    40% { transform: scale(1.3); opacity: 1; }
+}
+
+.highlight {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 600;
+    color: var(--accent-orange);
+}
+
+/* Enhanced Alert */
+.enhanced-alert {
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: var(--border-radius);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-section {
+        padding: 2rem 0;
+        min-height: auto;
+    }
+    
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .floating-ui-element {
+        display: none;
+    }
+    
+    .coach-main-card {
+        padding: 2rem;
+    }
+    
+    .coach-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .coach-icon-wrapper {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .feature-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+    }
+    
+    .floating-shape {
+        display: none;
+    }
+}
+
+/* Animation Library Integration */
+[data-aos] {
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+}
+
+/* Add gradient definition for progress ring */
+.progress-ring {
+    position: relative;
+}
+
+.progress-ring::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: conic-gradient(from 0deg, var(--primary-blue), var(--secondary-green), var(--primary-blue));
+    border-radius: 50%;
+    mask: radial-gradient(circle, transparent 32px, black 32px, black 48px, transparent 48px);
+    opacity: 0.8;
+}
+</style>
+
+<script>
+// Initialize AOS (Animate On Scroll) with enhanced options
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced scroll animation with better performance
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+                
+                // Trigger specific animations based on element type
+                if (entry.target.classList.contains('intelligence-card')) {
+                    setTimeout(() => {
+                        animateProgressRing(entry.target);
+                    }, 500);
+                }
+            }
+        });
+    }, observerOptions);
+
+    // Observe all elements with data-aos attribute
+    document.querySelectorAll('[data-aos]').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Enhanced progress ring animation
+    animateAllProgressRings();
+    
+    // Initialize chat preview animation
+    initializeChatPreview();
+    
+    // Initialize floating elements animation
+    initializeFloatingElements();
+    
+    // Smart loading of user-specific data
+    fetchUserInsights();
+    
+    // Initialize enhanced features
+    enhanceInteractiveElements();
+});
+
+function animateProgressRing(container) {
+    const progressRing = container.querySelector('.progress-ring-circle');
+    if (progressRing) {
+        const radius = progressRing.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        const progress = 75; // This could be dynamic
+        const offset = circumference - (progress / 100) * circumference;
+        
+        progressRing.style.strokeDasharray = circumference;
+        progressRing.style.strokeDashoffset = circumference;
+        
+        setTimeout(() => {
+            progressRing.style.stroke = 'url(#progressGradient)';
+            progressRing.style.strokeDashoffset = offset;
+        }, 200);
+    }
+}
+
+function animateAllProgressRings() {
+    // Add SVG gradient definition
+    const svg = document.querySelector('.progress-ring');
+    if (svg) {
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradient.id = 'progressGradient';
+        gradient.setAttribute('x1', '0%');
+        gradient.setAttribute('y1', '0%');
+        gradient.setAttribute('x2', '100%');
+        gradient.setAttribute('y2', '100%');
+        
+        const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop1.setAttribute('offset', '0%');
+        stop1.setAttribute('stop-color', '#3b82f6');
+        
+        const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop2.setAttribute('offset', '100%');
+        stop2.setAttribute('stop-color', '#10b981');
+        
+        gradient.appendChild(stop1);
+        gradient.appendChild(stop2);
+        defs.appendChild(gradient);
+        svg.appendChild(defs);
+    }
+}
+
+function initializeChatPreview() {
+    const typingIndicator = document.getElementById('typingIndicator');
+    const leoResponse = document.getElementById('leoResponse');
+    
+    if (typingIndicator && leoResponse) {
+        // Show typing indicator for 3 seconds, then show response
+        setTimeout(() => {
+            typingIndicator.style.display = 'none';
+            leoResponse.style.display = 'block';
+            leoResponse.style.animation = 'fadeInUp 0.5s ease';
+        }, 3000);
+    }
+}
+
+function initializeFloatingElements() {
+    // Add interactive hover effects to floating UI elements
+    document.querySelectorAll('.floating-ui-element').forEach(element => {
+        element.addEventListener('mouseenter', function() {
+            this.style.animationPlayState = 'paused';
+            this.style.transform = 'scale(1.1) translateY(-5px)';
+        });
+        
+        element.addEventListener('mouseleave', function() {
+            this.style.animationPlayState = 'running';
+            this.style.transform = '';
+        });
+    });
+}
+
+async function fetchUserInsights() {
+    try {
+        // Simulate API call with enhanced error handling
+        const response = await fetch('/api/user-insights');
+        if (response.ok) {
+            const insights = await response.json();
+            updateDashboardWithInsights(insights);
+        }
+    } catch (error) {
+        console.log('User insights loading in background...');
+        // Fallback to demo data
+        simulateDemoInsights();
+    }
+}
+
+function simulateDemoInsights() {
+    // Simulate realistic demo data
+    setTimeout(() => {
+        const demoInsights = {
+            careerProgress: Math.floor(Math.random() * (85 - 70) + 70),
+            industryMatch: Math.floor(Math.random() * (95 - 88) + 88),
+            nextActions: [
+                { icon: 'code', color: 'primary', text: 'Complete Python Advanced Module' },
+                { icon: 'cloud', color: 'success', text: 'AWS Cloud Practitioner Cert' },
+                { icon: 'project-diagram', color: 'info', text: 'Build ML Portfolio Project' }
+            ]
+        };
+        updateDashboardWithInsights(demoInsights);
+    }, 1000);
+}
+
+function updateDashboardWithInsights(insights) {
+    // Update progress circle with animation
+    if (insights.careerProgress) {
+        const progressRing = document.querySelector('.progress-ring-circle');
+        const progressText = document.querySelector('.progress-text');
+        if (progressRing && progressText) {
+            const radius = progressRing.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (insights.careerProgress / 100) * circumference;
+            
+            progressRing.style.strokeDashoffset = offset;
+            progressText.textContent = insights.careerProgress + '%';
+        }
+    }
+
+    // Update match score with animation
+    if (insights.industryMatch) {
+        const scoreNumber = document.querySelector('.score-number');
+        if (scoreNumber) {
+            animateNumber(scoreNumber, 0, insights.industryMatch, 1500);
+        }
+    }
+
+    // Update next actions with staggered animation
+    if (insights.nextActions && insights.nextActions.length > 0) {
+        const actionsContainer = document.querySelector('.next-actions');
+        if (actionsContainer) {
+            actionsContainer.innerHTML = '';
+            insights.nextActions.forEach((action, index) => {
+                setTimeout(() => {
+                    const actionElement = document.createElement('div');
+                    actionElement.className = 'action-item';
+                    actionElement.style.opacity = '0';
+                    actionElement.style.transform = 'translateX(-20px)';
+                    actionElement.innerHTML = `
+                        <div class="action-icon">
+                            <i class="fas fa-${action.icon} text-${action.color}"></i>
+                        </div>
+                        <span>${action.text}</span>
+                    `;
+                    actionsContainer.appendChild(actionElement);
+                    
+                    // Animate in
+                    setTimeout(() => {
+                        actionElement.style.transition = 'all 0.5s ease';
+                        actionElement.style.opacity = '1';
+                        actionElement.style.transform = 'translateX(0)';
+                    }, 100);
+                }, index * 200);
+            });
+        }
+    }
+}
+
+function animateNumber(element, start, end, duration) {
+    const startTime = performance.now();
+    
+    function updateNumber(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(start + (end - start) * easeOut);
+        
+        element.textContent = current + '%';
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+        }
+    }
+    
+    requestAnimationFrame(updateNumber);
+}
+
+function enhanceInteractiveElements() {
+    // Add ripple effect to buttons
+    document.querySelectorAll('.btn-enhanced').forEach(button => {
+        button.addEventListener('click', createRippleEffect);
+    });
+    
+    // Add tilt effect to cards
+    document.querySelectorAll('.intelligence-card, .enhanced-article-card').forEach(card => {
+        card.addEventListener('mousemove', handleCardTilt);
+        card.addEventListener('mouseleave', resetCardTilt);
+    });
+    
+    // Add parallax effect to hero section
+    window.addEventListener('scroll', handleParallaxEffect);
+}
+
+function createRippleEffect(e) {
+    const button = e.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+    
+    circle.style.width = circle.style.height = diameter + 'px';
+    circle.style.left = (e.clientX - button.offsetLeft - radius) + 'px';
+    circle.style.top = (e.clientY - button.offsetTop - radius) + 'px';
+    circle.classList.add('ripple');
+    
+    const ripple = button.getElementsByClassName('ripple')[0];
+    if (ripple) {
+        ripple.remove();
+    }
+    
+    button.appendChild(circle);
+    
+    // Add CSS for ripple effect
+    if (!document.getElementById('ripple-styles')) {
+        const style = document.createElement('style');
+        style.id = 'ripple-styles';
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple-animation 600ms linear;
+                background-color: rgba(255, 255, 255, 0.6);
+                pointer-events: none;
+            }
+            
+            @keyframes ripple-animation {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function handleCardTilt(e) {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = (y - centerY) / 10;
+    const rotateY = (centerX - x) / 10;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+}
+
+function resetCardTilt(e) {
+    const card = e.currentTarget;
+    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+}
+
+function handleParallaxEffect() {
+    const scrolled = window.pageYOffset;
+    const parallaxElements = document.querySelectorAll('.floating-shape');
+    
+    parallaxElements.forEach((element, index) => {
+        const speed = 0.5 + index * 0.1;
+        const yPos = -(scrolled * speed);
+        element.style.transform = `translateY(${yPos}px) rotate(${scrolled * 0.05}deg)`;
+    });
+    
+    // Hero section parallax
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+        const yPos = scrolled * 0.3;
+        heroSection.style.transform = `translateY(${yPos}px)`;
+    }
+}
+
+// Enhanced search functionality with keyboard shortcuts
+function initializeQuickSearch() {
+    // Add keyboard shortcut for quick search (Ctrl+K or Cmd+K)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            showQuickSearchModal();
+        }
+    });
+}
+
+function showQuickSearchModal() {
+    const searchModal = document.createElement('div');
+    searchModal.className = 'modal fade';
+    searchModal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3);">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                    <h5 class="modal-title">
+                        <i class="fas fa-search me-2 text-primary"></i>Quick Search
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="search-input-group">
+                        <input type="text" class="form-control form-control-lg" 
+                               placeholder="Search courses, companies, articles, or ask Leo..." 
+                               id="quickSearchInput"
+                               style="background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">
+                        <div class="search-suggestions mt-3">
+                            <div class="suggestion-item" style="padding: 1rem; background: rgba(255, 255, 255, 0.6); border-radius: 12px; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="fas fa-route text-primary me-2"></i>
+                                <span>View my learning roadmap</span>
+                            </div>
+                            <div class="suggestion-item" style="padding: 1rem; background: rgba(255, 255, 255, 0.6); border-radius: 12px; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="fas fa-robot text-success me-2"></i>
+                                <span>Chat with Career Coach Leo</span>
+                            </div>
+                            <div class="suggestion-item" style="padding: 1rem; background: rgba(255, 255, 255, 0.6); border-radius: 12px; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="fas fa-graduation-cap text-info me-2"></i>
+                                <span>Find AI Tutor for current module</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(searchModal);
+    
+    // Add hover effects to suggestions
+    searchModal.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.background = 'rgba(255, 255, 255, 0.9)';
+            this.style.transform = 'translateX(10px)';
+            this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.background = 'rgba(255, 255, 255, 0.6)';
+            this.style.transform = 'translateX(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+    
+    // Initialize modal
+    const modal = new bootstrap.Modal(searchModal);
+    modal.show();
+    
+    // Focus on input when modal opens
+    searchModal.addEventListener('shown.bs.modal', function() {
+        document.getElementById('quickSearchInput').focus();
+    });
+    
+    // Clean up when modal is hidden
+    searchModal.addEventListener('hidden.bs.modal', function() {
+        searchModal.remove();
+    });
+}
+
+// Achievement notifications system
+function initializeNotifications() {
+    // Show achievement after 5 seconds
+    setTimeout(() => {
+        showAchievementNotification();
+    }, 5000);
+    
+    // Show periodic notifications
+    setInterval(() => {
+        if (Math.random() > 0.7) { // 30% chance every interval
+            showAchievementNotification();
+        }
+    }, 30000); // Every 30 seconds
+}
+
+function showAchievementNotification() {
+    const achievements = [
+        { icon: 'trophy', text: 'Completed 75% of Python roadmap!', type: 'success' },
+        { icon: 'star', text: 'Your profile matched with 3 new companies!', type: 'info' },
+        { icon: 'graduation-cap', text: 'New AI/ML course recommendation available!', type: 'warning' },
+        { icon: 'brain', text: 'Leo has new insights for your career path!', type: 'primary' },
+        { icon: 'chart-line', text: 'Your industry match score increased to 94%!', type: 'success' }
+    ];
+    
+    const randomAchievement = achievements[Math.floor(Math.random() * achievements.length)];
+    
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${randomAchievement.type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = `
+        top: 20px; 
+        right: 20px; 
+        z-index: 1050; 
+        min-width: 320px;
+        max-width: 400px;
+        animation: slideInRight 0.5s ease;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+    `;
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="fas fa-${randomAchievement.icon}" style="font-size: 1.5rem;"></i>
+            </div>
+            <div class="flex-grow-1">
+                <strong>Achievement Unlocked!</strong><br>
+                <small>${randomAchievement.text}</small>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-dismiss after 6 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.5s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 500);
+        }
+    }, 6000);
+}
+
+// Enhanced article interactions
+function enhanceArticleCards() {
+    const articleCards = document.querySelectorAll('.enhanced-article-card');
+    articleCards.forEach((card, index) => {
+        // Add reading progress simulation
+        const footer = card.querySelector('.article-footer');
+        if (footer) {
+            const progressBar = document.createElement('div');
+            progressBar.className = 'reading-progress mt-2';
+            progressBar.innerHTML = `
+                <div class="progress" style="height: 4px; background: rgba(0,0,0,0.1); border-radius: 10px;">
+                    <div class="progress-bar" style="width: 0%; transition: width 2s ease; background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green)); border-radius: 10px;"></div>
+                </div>
+            `;
+            footer.appendChild(progressBar);
+            
+            // Animate progress bar on hover
+            card.addEventListener('mouseenter', function() {
+                const bar = this.querySelector('.progress-bar');
+                if (bar) {
+                    const randomProgress = Math.floor(Math.random() * 40 + 30);
+                    bar.style.width = randomProgress + '%';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                const bar = this.querySelector('.progress-bar');
+                if (bar) {
+                    bar.style.width = '0%';
+                }
+            });
+        }
+        
+        // Add bookmark functionality
+        const header = card.querySelector('.article-header');
+        if (header) {
+            const bookmarkBtn = document.createElement('button');
+            bookmarkBtn.className = 'btn btn-sm btn-outline-secondary bookmark-btn';
+            bookmarkBtn.innerHTML = '<i class="far fa-bookmark" style="color: gold;"></i>';
+            bookmarkBtn.style.cssText = `
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                transition: all 0.3s ease;
+            `;
+            
+            bookmarkBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('far')) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    this.classList.add('btn-primary');
+                    this.classList.remove('btn-outline-secondary');
+                } else {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-outline-secondary');
+                }
+            });
+            
+            card.style.position = 'relative';
+            card.appendChild(bookmarkBtn);
+        }
+    });
+}
+
+// Initialize all enhanced features when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeQuickSearch();
+    initializeNotifications();
+    enhanceArticleCards();
+    
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Add CSS animations
+    const additionalStyles = document.createElement('style');
+    additionalStyles.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .bookmark-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Enhanced loading states */
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-green));
+        }
+    `;
+    document.head.appendChild(additionalStyles);
+});
+
+// Performance optimization: Intersection Observer for expensive animations
+const performanceObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // Only start expensive animations when elements are visible
+            const element = entry.target;
+            
+            if (element.classList.contains('floating-shape')) {
+                element.style.animationPlayState = 'running';
+            }
+            
+            if (element.classList.contains('pulse-animation')) {
+                element.style.animationPlayState = 'running';
+            }
+        } else {
+            // Pause animations when out of view to save resources
+            const element = entry.target;
+            
+            if (element.classList.contains('floating-shape')) {
+                element.style.animationPlayState = 'paused';
+            }
+        }
+    });
+}, { threshold: 0.1 });
+
+// Apply performance observer to animated elements
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.floating-shape, .pulse-animation').forEach(el => {
+        performanceObserver.observe(el);
+    });
+});
+
+// Preload important resources
+function preloadResources() {
+    const importantUrls = [
+        'https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs',
+        'https://lottie.host/a9920460-676d-4279-a684-6642699754b4/tqcvkmbNSd.lottie'
+    ];
+    
+    importantUrls.forEach(url => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = url;
+        link.as = 'fetch';
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+    });
+}
+
+// Initialize preloading
+document.addEventListener('DOMContentLoaded', preloadResources);
+</script>
+
+{% endblock %}

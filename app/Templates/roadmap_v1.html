@@ -1,0 +1,1003 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Roadmap - Career Development
+{% endblock %}
+
+{% block content %}
+<!-- Clean Professional Header -->
+<div class="roadmap-header">
+    <div class="container">
+        <div class="header-content">
+            <h1 class="main-title">Career Development Roadmap</h1>
+            <p class="subtitle">Hey <strong>{{ user.name }}</strong>, here's your personalized learning journey to success!</p>
+            <div class="roadmap-stats">
+                <div class="stat-card">
+                    <div class="stat-number">{{ roadmap_data.phases|length }}</div>
+                    <div class="stat-label">Learning Phases</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        {% set total_completed = 0 %}
+                        {% for phase in roadmap_data.phases %}
+                            {% set total_days = 0 %}
+                            {% set completed_days = 0 %}
+                            {% if phase.get('learning_plan') %}
+                                {% for week in phase.learning_plan.weekly_schedule %}
+                                    {% for task in week.daily_tasks %}
+                                        {% set total_days = total_days + 1 %}
+                                        {% if task.completed %}
+                                            {% set completed_days = completed_days + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                            {% if total_days > 0 and completed_days == total_days %}
+                                {% set total_completed = total_completed + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ total_completed }}
+                    </div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Professional Timeline -->
+<div class="container">
+    <div class="timeline-container">
+        <!-- Animated Timeline Line -->
+        <div class="timeline-line">
+            <div class="timeline-line-fill"></div>
+        </div>
+        
+        {% for phase in roadmap_data.phases %}
+            {% set total_days = namespace(value=0) %}
+            {% set completed_days = namespace(value=0) %}
+            
+            {% if phase.get('learning_plan') %}
+                {% for week in phase.learning_plan.weekly_schedule %}
+                    {% for task in week.daily_tasks %}
+                        {% set total_days.value = total_days.value + 1 %}
+                        {% if task.completed %}
+                            {% set completed_days.value = completed_days.value + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+            {% set progress = (completed_days.value / total_days.value * 100)|round if total_days.value > 0 else 0 %}
+            {% set phase_status = 'completed' if progress == 100 else ('in-progress' if progress > 0 else 'pending') %}
+
+            <div class="timeline-item {{ 'timeline-left' if loop.index % 2 == 1 else 'timeline-right' }} fade-in-item" 
+                 data-phase="{{ loop.index }}" 
+                 style="animation-delay: {{ (loop.index - 1) * 0.2 }}s;">
+                
+                <!-- Animated Timeline Point -->
+                <div class="timeline-point {{ phase_status }}">
+                    <div class="point-inner">
+                        <div class="point-pulse"></div>
+                        {% if progress == 100 %}
+                            <i class="fas fa-check"></i>
+                        {% elif progress > 0 %}
+                            <i class="fas fa-clock"></i>
+                        {% else %}
+                            <i class="fas fa-circle"></i>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Enhanced Phase Card -->
+                <div class="phase-card hover-lift">
+                    <!-- Animated Progress Header -->
+                    <div class="progress-header">
+                        <div class="progress-info">
+                            <span class="progress-text">{{ progress }}% Complete</span>
+                            <span class="phase-status {{ phase_status }}">
+                                {% if progress == 100 %}
+                                    <i class="fas fa-trophy"></i> Completed
+                                {% elif progress > 0 %}
+                                    <i class="fas fa-play"></i> In Progress
+                                {% else %}
+                                    <i class="fas fa-rocket"></i> Ready to Start
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill {{ phase_status }}" data-progress="{{ progress }}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Card Content -->
+                    <div class="card-content">
+                        <div class="phase-header">
+                            <h2 class="phase-title">{{ phase.name }}</h2>
+                            <div class="phase-duration">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ phase.duration }}</span>
+                            </div>
+                        </div>
+
+                        <p class="phase-description">{{ phase.description }}</p>
+
+                        <!-- Animated Skills Section -->
+                        <div class="skills-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-lightbulb"></i>
+                                Key Skills
+                            </h3>
+                            <div class="skills-container">
+                                {% for skill in phase.skills %}
+                                    <span class="skill-tag animate-skill" style="animation-delay: {{ loop.index * 0.1 }}s;">
+                                        {{ skill }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Resources Section -->
+                        <div class="resources-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-book-open"></i>
+                                Learning Resources
+                            </h3>
+                            <div class="resources-grid">
+                                {% for category, items in phase.resources.items() %}
+                                    <div class="resource-group hover-scale">
+                                        <div class="resource-header">
+                                            <h4 class="resource-category">{{ category }}</h4>
+                                            <span class="resource-count">{{ items|length }}</span>
+                                        </div>
+                                        <ul class="resource-list">
+                                            {% for item in items[:3] %}
+                                                <li class="resource-item">
+                                                    <i class="fas fa-external-link-alt"></i>
+                                                    {{ item }}
+                                                </li>
+                                            {% endfor %}
+                                            {% if items|length > 3 %}
+                                                <li class="resource-more">+{{ items|length - 3 }} more resources</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Action Button -->
+                        <div class="card-actions">
+                            {% if progress < 100 %}
+                                <button onclick="startModule('{{loop.index0}}')" class="btn-primary pulse-on-hover">
+                                    <i class="fas fa-{{ 'play' if total_days.value > 0 else 'rocket' }}"></i>
+                                    <span>{{ 'Continue Learning' if total_days.value > 0 else 'Start Phase' }}</span>
+                                    <div class="btn-wave"></div>
+                                </button>
+                            {% else %}
+                                <button class="btn-completed">
+                                    <i class="fas fa-trophy"></i>
+                                    <span>Phase Completed</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+/* Enhanced Professional Styles with Light Blue Accents */
+* {
+    box-sizing: border-box;
+}
+
+/* Header Section with Light Blue Gradient */
+.roadmap-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e6f3ff 50%, #f0f8ff 100%);
+    padding: 3rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.roadmap-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.header-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.025em;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.roadmap-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #dbeafe;
+}
+
+.stat-card:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #3b82f6;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-number {
+    transform: scale(1.1);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+}
+
+/* Enhanced Timeline Container */
+.timeline-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 2rem 0;
+}
+
+/* Animated Timeline Line */
+.timeline-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #e2e8f0;
+    transform: translateX(-50%);
+    z-index: 1;
+    border-radius: 2px;
+}
+
+.timeline-line-fill {
+    width: 100%;
+    height: 0;
+    background: linear-gradient(to bottom, #3b82f6, #60a5fa, #93c5fd);
+    border-radius: 2px;
+    animation: growLine 2s ease-out 0.5s both;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+@keyframes growLine {
+    to {
+        height: 100%;
+    }
+}
+
+/* Enhanced Timeline Items */
+.timeline-item {
+    position: relative;
+    margin: 3rem 0;
+}
+
+.fade-in-item {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    animation: fadeInScale 0.8s ease-out forwards;
+}
+
+@keyframes fadeInScale {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Enhanced Timeline Point */
+.timeline-point {
+    position: absolute;
+    left: 50%;
+    top: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid #e2e8f0;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.point-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+.timeline-point.completed {
+    border-color: #10b981;
+    background: #10b981;
+    color: white;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.timeline-point.in-progress {
+    border-color: #3b82f6;
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.timeline-point.in-progress .point-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.timeline-point.pending {
+    border-color: #94a3b8;
+    background: white;
+    color: #94a3b8;
+}
+
+.point-inner {
+    font-size: 1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Enhanced Phase Cards */
+.phase-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    width: 45%;
+    position: relative;
+}
+
+.timeline-left .phase-card {
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.timeline-right .phase-card {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.hover-lift {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-lift:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(59, 130, 246, 0.1);
+}
+
+/* Enhanced Progress Header */
+.progress-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f0f8ff 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.phase-status {
+    font-size: 0.75rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+}
+
+.phase-status.completed {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.phase-status.in-progress {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.phase-status.pending {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    color: #475569;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        rgba(255, 255, 255, 0.2) 75%, 
+        transparent 75%);
+    background-size: 20px 20px;
+    animation: progressStripes 1s linear infinite;
+}
+
+@keyframes progressStripes {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 0; }
+}
+
+.progress-fill.completed {
+    background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+.progress-fill.in-progress {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+
+.progress-fill.pending {
+    background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+}
+
+/* Enhanced Card Content */
+.card-content {
+    padding: 2rem;
+}
+
+.phase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.phase-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin: 0;
+    line-height: 1.3;
+    background: linear-gradient(135deg, #1a202c, #2d3748);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.phase-duration {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #3b82f6;
+    font-size: 0.875rem;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #93c5fd;
+    font-weight: 600;
+}
+
+.phase-description {
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    color: #3b82f6;
+}
+
+/* Animated Skills */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.skill-tag {
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    color: #4a5568;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.animate-skill {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.6s ease-out forwards;
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.skill-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.skill-tag:hover {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.skill-tag:hover::before {
+    left: 100%;
+}
+
+/* Enhanced Resources */
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.resource-group {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-scale {
+    transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.resource-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.resource-category {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.resource-count {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.resource-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.resource-item {
+    color: #4a5568;
+    font-size: 0.875rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.resource-item:hover {
+    color: #3b82f6;
+    padding-left: 0.5rem;
+}
+
+.resource-item:last-child {
+    border-bottom: none;
+}
+
+.resource-item i {
+    color: #3b82f6;
+    font-size: 0.75rem;
+}
+
+.resource-more {
+    color: #3b82f6;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.5rem 0;
+    font-style: italic;
+}
+
+/* Enhanced Action Buttons */
+.card-actions {
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    width: 100%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-wave {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.pulse-on-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    animation: buttonPulse 0.6s ease;
+}
+
+.pulse-on-hover:hover .btn-wave {
+    left: 100%;
+}
+
+@keyframes buttonPulse {
+    0% { transform: translateY(-2px) scale(1); }
+    50% { transform: translateY(-2px) scale(1.05); }
+    100% { transform: translateY(-2px) scale(1); }
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-completed {
+    width: 100%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 2rem;
+    }
+    
+    .roadmap-stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .timeline-line {
+        left: 30px;
+    }
+    
+    .timeline-point {
+        left: 30px;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .phase-card {
+        width: calc(100% - 80px);
+        margin-left: 80px !important;
+        margin-right: 0 !important;
+    }
+    
+    .phase-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .resources-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .roadmap-header {
+        padding: 2rem 0;
+    }
+    
+    .progress-header {
+        padding: 1rem;
+    }
+}
+</style>
+
+
+<script>
+function startModule(phaseId) {
+    const button = event.target;
+    const originalContent = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    button.disabled = true;
+    button.style.opacity = '0.7';
+
+    fetch(`/generate-plan/${phaseId}`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            button.innerHTML = '<i class="fas fa-check"></i> Success!';
+            button.style.background = '#48bb78';
+            setTimeout(() => {
+                window.location.href = `/learning-plan/${phaseId}`;
+            }, 800);
+        } else if(data.status === 'exists') {
+            window.location.href = `/learning-plan/${phaseId}`;
+        } else {
+            // Restore original state
+            button.innerHTML = originalContent;
+            button.disabled = false;
+            button.style.opacity = '1';
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        // Restore original state
+        button.innerHTML = originalContent;
+        button.disabled = false;
+        button.style.opacity = '1';
+        alert('Error: ' + error);
+    });
+}
+
+// Initialize animations when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Trigger timeline animations
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    
+    // Intersection Observer for scroll-triggered animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+    
+    timelineItems.forEach((item, index) => {
+        // Set initial state
+        item.style.animationDelay = `${index * 0.1}s`;
+        observer.observe(item);
+    });
+    
+    // Smooth scroll for any internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
